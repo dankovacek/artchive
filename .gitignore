@@ -1,0 +1,8 @@
+# Ignore all folders except public folder
+# as well as .git folder so it doesn't get copied
+# to the production environment
+
+/logs
+/private
+/protected
+/tmp
