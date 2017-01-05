@@ -10,6 +10,10 @@
 *.pyc
 
 # don't track protected files with api keys
-protected/api_key.json
-protected/client_secrets.json
-protected/fb_client_secrets.json
+*/api_key.json
+*/client_secrets.json
+*/fb_client_secrets.json
+
+# ignore git files
+.gitignore
+.git
