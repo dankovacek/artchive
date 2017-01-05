@@ -6,3 +6,6 @@
 /private
 /protected
 /tmp
+
+# ignore all .pyc files
+*.pyc
