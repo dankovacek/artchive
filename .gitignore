@@ -8,3 +8,8 @@
 
 # ignore all .pyc files
 *.pyc
+
+# don't track protected files with api keys
+/protected/api_key.json
+/protected/client_secrets.json
+/protected/fb_client_secrets.json

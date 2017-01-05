@@ -19,8 +19,8 @@ import string
 import sys
 
 # import the db
-from graffikiapp import db
-from graffikiapp import graffikiApp
+from app import db
+from app import graffikiApp
 
 # create the mod_auth blueprint that gets registered in
 # init.py
@@ -67,12 +67,3 @@ class MainAppManager(SessionManager):
     #                 helpers.edit_delete_item(currentItem)
     #                 flash("Item deleted.")
     #                 return redirect('/users/' + str(currentUser.id) + '/')
-
-
-# if __name__ == '__main__':
-#     # detects changes and automatically restarts server
-#     app.secret_key = helpers.get_api_key(
-#         'secret_key', 'web', 'client_secret')
-#     app.debug = True
-#     # app.session_interface = ItsdangerousSessionInterface()
-#     app.run(host='0.0.0.0', port=5050)

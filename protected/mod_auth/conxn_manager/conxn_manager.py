@@ -4,10 +4,11 @@ from flask_sqlalchemy import declarative_base
 #from sqlalchemy.ext.declarative import declarative_base
 import os
 
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+print BASE_DIR
 
 Base = declarative_base()
-engine = create_engine('sqlite:///' + os.path.join(BASE_DIR, 'graffikiApp.db'))
+engine = create_engine('sqlite:///' + os.path.join(BASE_DIR, 'artchive.db'))
 Base.metadata.bind = engine
 #Base.metadata.create_all(engine)
 
@@ -20,7 +21,3 @@ class SessionManager(object):
 
     def __init__(self):
         self.dbSession = DBSession()
-
-# I need to develop a generalized approach to backend setup
-# including server configuration, security, basic app launch,
-# testing, and production tools / tasks.
