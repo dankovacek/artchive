@@ -39,6 +39,7 @@ class MainAppManager(SessionManager):
 
     @app.route('/api_key_query')
     def key_query():
+        """Routing for Google Maps API key retrieval."""
         # Get Flickr API Key
         flickr_key = helpers.get_api_key('flickr', 'flickr', 'api_key')
         return jsonify(result=flickr_key)
