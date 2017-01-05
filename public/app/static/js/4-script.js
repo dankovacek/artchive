@@ -362,49 +362,7 @@ var ViewModel = function() {
 
     //store all 'alias' or screen names in an array for
     //use with autocomplete function in 'user name' filter
-     var allUserNames = [];
-
-    this.createUserObject = function() {
-        console.log(self.flickrData.FLICKR_API_KEY, 'flickr api key scope!!!!!');
-        var requestUrl = 'https://api.flickr.com/services/rest/?method=flickr.people.getInfo';
-        var apiKey = "2c61a9dc91695218b1450efb95491143";
-
-        //how many names are we looking for?
-        var numberOfUsers = Object.keys(self.userList).length;
-
-        var allUsers = Object.keys(self.userList);
-
-        //go through all of the usernames in allUsers and make an ajax
-        //request for the nickname.  The 'then' portion of script
-        //will be executed after all the requests have resolved (or on error)
-        self.whenAll($.map(allUsers, function(k, v) {
-            return $.getJSON(requestUrl, {
-                api_key: apiKey,
-                user_id: k,
-                format: "json",
-                nojsoncallback: 1
-                })
-
-                .done(function(data) {
-                    var allImageObjects = self.getAllUserPhotos(k);
-                    self.users.push( new User(data.person, allImageObjects) );
-                })
-
-                .fail(function() {
-                    alert("The Flickr request has kicked the bucket.  What'd you do??");
-                });
-        })).then(function() {
-            self.users().forEach(function(user) {
-                if (user==='null') {
-                    allUserNames.push('undefined');
-                } else {
-                    allUserNames.push(user.alias);
-                }
-            });
-            //only run filterUsers once all ajax requests are complete
-            self.filterUsers();
-        });
-    };
+    var allUserNames = [];
 
     this.filterUsers = function(){
 
@@ -511,7 +469,53 @@ var ViewModel = function() {
         }
     };
 
-    this.make_flickr_request = function(flickr_key, bounds) {
+    this.createUserObject = function() {
+        var apiKey = self.get_flickr_api_key();
+    };
+
+    this.make_flickr_user_request = function (apiKey) {
+        // Requests User objects from flicker API based on Username
+        // associated with a photo
+        var requestUrl = 'https://api.flickr.com/services/rest/?method=flickr.people.getInfo';
+
+        //how many names are we looking for?
+        var numberOfUsers = Object.keys(self.userList).length;
+
+        var allUsers = Object.keys(self.userList);
+
+        //go through all of the usernames in allUsers and make an ajax
+        //request for the nickname.  The 'then' portion of script
+        //will be executed after all the requests have resolved (or on error)
+        self.whenAll($.map(allUsers, function(k, v) {
+            return $.getJSON(requestUrl, {
+                api_key: apiKey,
+                user_id: k,
+                format: "json",
+                nojsoncallback: 1
+                })
+
+                .done(function(data) {
+                    var allImageObjects = self.getAllUserPhotos(k);
+                    self.users.push( new User(data.person, allImageObjects) );
+                })
+
+                .fail(function() {
+                    alert("The Flickr request has kicked the bucket.  What'd you do??");
+                });
+        })).then(function() {
+            self.users().forEach(function(user) {
+                if (user==='null') {
+                    allUserNames.push('anonymous');
+                } else {
+                    allUserNames.push(user.alias);
+                }
+            });
+            //only run filterUsers once all ajax requests are complete
+            self.filterUsers();
+        });
+    };
+
+    this.make_flickr_photo_request = function(flickr_key, bounds) {
         // the flickr request string filters for photos with geoTag, by the
         // location stored in place.name, and by the keywords listed in the
         // tags array, default to "or"(any) of the tags instead of "and" (all)
@@ -539,7 +543,6 @@ var ViewModel = function() {
             allPhotos.forEach(function(photo){
                 if (photo.latitude) {
                     if (photo.latitude !== 0) {
-                        console.log('here!!!');
                         //create a location object
                         var location = {lat: photo.latitude, lon: photo.longitude};
                         //measure distance to currentlocation
@@ -558,12 +561,12 @@ var ViewModel = function() {
 
     this.get_flickr_api_key = function(bounds) {
         $.getJSON('/api_key_query', {
-            async: false,
         })
         .done(function(data) {
             // Send the api_key to the flickr api request function
             // to avoid problems with asynchronous ajax requests
-            self.make_flickr_request(data.result, bounds);
+            self.make_flickr_photo_request(data.result, bounds);
+            self.make_flickr_user_request(data.result);
         })
         .fail(function() {
             alert("Failed to retrieve Flickr API Key.  What'd you do??");
