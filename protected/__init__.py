@@ -15,14 +15,15 @@ import sys
 
 # define the templates folder
 template_folder = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'public/app/templates')
-print 'templates ==========>', template_folder
 #define the config folder
 # d = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 static_folder = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'public/app/static')
 
+instance_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'protected/')
+
 # Define the WSGI application object
-app = Flask(__name__, template_folder=template_folder, static_folder=static_folder)
+app = Flask(__name__, template_folder=template_folder, static_folder=static_folder, instance_path=instance_path)
 
 # Configurations
 # Point the path to the parent directory

@@ -18,10 +18,7 @@ import requests
 import string
 import sys
 
-# import the db
 #sys.path.insert(0, os.path.abspath('..'))
-#from __init__ import db
-#from __init__ import graffikiApp
 
 # create the mod_auth blueprint that gets registered in
 # init.py
@@ -29,17 +26,22 @@ import sys
 app = Blueprint('default', __name__)
 
 # create an instance of helperManager class to access helper functions
+helpers = helperManager()
 
 class MainAppManager(SessionManager):
-
     """ Main routing features for app. """
-
     @app.route('/')
     def Main():
         currentUser = None# helpers.get_current_user()
         items = None #helpers.get_all_items()
         return render_template('index.html')
         #, items=items, user=currentUser)
+
+    @app.route('/api_key_query')
+    def key_query():
+        # Get Flickr API Key
+        flickr_key = helpers.get_api_key('flickr', 'flickr', 'api_key')
+        return jsonify(result=flickr_key)
 
     # # display only the current user's items
     # @app.route('/users/<int:user_id>/')

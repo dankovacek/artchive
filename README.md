@@ -12,8 +12,26 @@ TL;DR:
 `$ apt-get install pip`
 `$ pip install virtualenv`
 
-Start the development server from the root directory (/graffiki):
+Start the development server from the root directory (/artchive):
 `$ python run.py`
+
+A few notes on how this is is set up:
+
+<ul>
+<li>For my webhost, Nearlyfreespeech.net, an 'index' file of some
+sort must be included in the /public folder.</li>
+<li>There are a few ways to accomplish the above point, and
+my approach is to create the shell script run.sh, which calls
+only one function, run.py.</li>
+<li>In calling the 'app' module in run.py  (from protected import app),
+__init__.py is called.  '__init__.py' sets the app configuration file,
+sets 'secret key', registers module blueprints, and initializes the Flask app instance, creates the database, sets template and static resource folders, and contains a 404 error handler.
+</li>
+<li>Registering the default_module blueprint imports the main
+functions of the controller code, where routing occurs, where
+models are called, and where the views are executed.</li>
+</ul>
+
 
 ## 2.0 Background and Inspiration
 

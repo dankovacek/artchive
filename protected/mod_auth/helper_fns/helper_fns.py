@@ -28,6 +28,8 @@ import jinja2
 INSTANCE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                             os.pardir, os.pardir))
 
+INSTANCE_DIR += '/api_keys'
+
 class helperManager(SessionManager):
 
     def login_required(self, f):
@@ -43,6 +45,7 @@ class helperManager(SessionManager):
     def get_key(self, key_file, api_type, descriptor):
         with open(key_file) as api_data_file:
             data = json.load(api_data_file)
+            api_data_file.closed
             return data[api_type][descriptor]
 
     def get_api_key(self, service, api_type, descriptor):
@@ -50,7 +53,7 @@ class helperManager(SessionManager):
         if service == 'oauth2':
             return self.get_key(INSTANCE_DIR + '/client_secrets.json',
                                 api_type, descriptor)
-        elif service == 'places_search':
+        elif service == 'places_search' or service == 'flickr':
             return self.get_key(INSTANCE_DIR + '/api_key.json',
                                 api_type, descriptor)
         elif service == 'secret_key':

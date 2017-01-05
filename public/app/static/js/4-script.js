@@ -365,6 +365,7 @@ var ViewModel = function() {
      var allUserNames = [];
 
     this.createUserObject = function() {
+        console.log(self.flickrData.FLICKR_API_KEY, 'flickr api key scope!!!!!');
         var requestUrl = 'https://api.flickr.com/services/rest/?method=flickr.people.getInfo';
         var apiKey = "2c61a9dc91695218b1450efb95491143";
 
@@ -510,20 +511,18 @@ var ViewModel = function() {
         }
     };
 
-    this.flickrData = function(bounds) {
+    this.make_flickr_request = function(flickr_key, bounds) {
+        // the flickr request string filters for photos with geoTag, by the
+        // location stored in place.name, and by the keywords listed in the
+        // tags array, default to "or"(any) of the tags instead of "and" (all)
 
-        //the flickr request string filters for photos with geoTag, by the
-        //location stored in place.name, and by the keywords listed in the
-        //tags array, default to "or"(any) of the tags instead of "and" (all)
-
-        //search for images only in the current map view
-        //required bounding box format is [min_lon, min_lat, max_lon, max_lat]
+        // search for images only in the current map view
+        // required bounding box format is [min_lon, min_lat, max_lon, max_lat]
         var searchBounds = bounds.b.b + ',' + bounds.f.f + ',' + bounds.b.f + ',' + bounds.f.b;
         var searchTags = "graffiti";
-        var APIKey = "2c61a9dc91695218b1450efb95491143";
-        var flickrAPI = 'https://api.flickr.com/services/rest/?method=flickr.photos.search';
-        var foo = $.getJSON(flickrAPI, {
-            api_key: APIKey,
+        var flickr_base_uri = 'https://api.flickr.com/services/rest/?method=flickr.photos.search';
+        $.getJSON(flickr_base_uri, {
+            api_key: flickr_key,
             bbox: searchBounds,
             extras: "geo",
             has_geo: "1",
@@ -533,30 +532,49 @@ var ViewModel = function() {
             format: "json",
             nojsoncallback: 1
         })
-
-            .done(function(data) {
-                var allPhotos = data.photos.photo;
-                //max is 250 photos, but only put
-                //georeferenced photos into the allPhotos array
-                allPhotos.forEach(function(photo){
-                    if (photo.latitude) {
-                        if (photo.latitude !== 0) {
-                            //create a location object
-                            var location = {lat: photo.latitude, lon: photo.longitude};
-                            //measure distance to currentlocation
-                            //and only push if it's inside the current setdistance
-                            self.photoList.push( new Photo(photo, location) );
-                            //create a map marker pin
-                            self.createPhotoMarker(photo);
-                        }
+        .done(function(data) {
+            var allPhotos = data.photos.photo;
+            //max is 250 photos, but only put
+            //georeferenced photos into the allPhotos array
+            allPhotos.forEach(function(photo){
+                if (photo.latitude) {
+                    if (photo.latitude !== 0) {
+                        console.log('here!!!');
+                        //create a location object
+                        var location = {lat: photo.latitude, lon: photo.longitude};
+                        //measure distance to currentlocation
+                        //and only push if it's inside the current setdistance
+                        self.photoList.push( new Photo(photo, location) );
+                        //create a map marker pin
+                        self.createPhotoMarker(photo);
                     }
-                });
-
-            })
-
-            .fail(function() {
-                alert("The Flickr request has kicked the bucket.  What'd you do??");
+                }
             });
+        })
+        .fail(function() {
+            alert("The Flickr request has kicked the bucket.  What'd you do??");
+        });
+    };
+
+    this.get_flickr_api_key = function(bounds) {
+        $.getJSON('/api_key_query', {
+            async: false,
+        })
+        .done(function(data) {
+            // Send the api_key to the flickr api request function
+            // to avoid problems with asynchronous ajax requests
+            self.make_flickr_request(data.result, bounds);
+        })
+        .fail(function() {
+            alert("Failed to retrieve Flickr API Key.  What'd you do??");
+        });
+    };
+
+    this.flickrData = function(bounds) {
+        // Retrieve the flickr api key from secure folder, then because
+        // of asynchronous Ajax request, on successful retrieval, trigger
+        // a second ajax request to the actual flickr API.
+        var flickr_key = self.get_flickr_api_key(bounds);
     };
 
     //setPlace gets called from page load and from a change in the
@@ -944,7 +962,7 @@ var set_bg_image = function() {
     var s = new Snap("#splashLogo");
     var g = s.group();
 
-    var logo = Snap.load('/static/images/graffotoLogoBlackMobile.svg', function(f) {
+    var logo = Snap.load('/static/images/artchivelogo_frontpage.svg', function(f) {
         g.append(f);
         var logo_svg = g.select("#logo_text");
         var logo_dims = logo_svg.getBBox();
