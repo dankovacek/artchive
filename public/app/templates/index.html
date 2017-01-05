@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>GraFFoTo - Virtual Graffiti Tours</title>
+    <link rel="stylesheet" href="static/css/style.css">
+    <link rel="stylesheet" href="static/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=News+Cycle" rel="stylesheet">
+    <link rel="icon" href="favicon.ico">
+</head>
+<body>
+    <div class="loader">
+        <svg id="splashLogo"></svg>
+        <div class="geoPermission">
+            <button class="useMyLocation" data-bind="click: getInitialGeoLocation">USE CURRENT LOCATION</button>
+            <div class="setLocation">
+                <input id="setLocation" data-bind="value: $root.newPlace" placeholder="OR SET LOCATION">
+                <span data-bind="click: $root.changePlace" id="setLocationBtn">
+                    <i class="fa fa-arrow-right fa-4x"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex-container">
+
+        <nav class="Offscreen Nav-List">
+            <a href="#" class="Button">
+                <i class="Menu-Bar Menu-Top"></i>
+                <i class="Menu-Bar Menu-Middle"></i>
+                <i class="Menu-Bar Menu-Bottom"></i>
+            </a>
+            <div class="filterWindow" data-bind="visible: $root.showDistance">
+                <select id="distSelect" data-bind="options: availableRange,
+                                selectedOption: chosenRadius,
+                               optionsText: 'distLabel',
+                               optionsCaption: 'Search Radius'">
+                </select>
+                <a href="#" class="changePlaceGo" data-bind="click: $root.distanceFilter">
+                    SET
+                </a>
+            </div>
+            <div class="filterWindow" data-bind="visible: $root.showFilters">
+                <input id="userFilter" data-bind="value: selectedUser, valueUpdate: ['blur']" placeholder="Filter by Username">
+                <a href="#" class="changePlaceGo" data-bind="click: $root.filterByUser">
+                    FILTER
+                </a>
+            </div>
+
+            <div data-bind="click: toggleDistanceWindow">
+                <a href="#">
+                    <i class="fa fa-bullseye fa-2x"></i>
+                </a>
+            </div>
+            <div data-bind="click: toggleFilterWindow">
+                <a href="#">
+                    <i class="fa fa-filter fa-2x"></i>
+                </a>
+            </div>
+
+            <i class="fa fa-info fa-2x" data-bind="click: toggleInfo"></i>
+
+            <p data-bind="visible: $root.showInfo" class="infoWindow">
+                DOUBLE CLICK ON THE MAP TO CHANGE LOCATIONS.  USE THE PRESET SEARCH RANGE OPTIONS TO LIMIT SEARCHES TO A FIXED DISTANCE.  A MAXIMUM OF 25 SEARCHES ARE RETURNED, SO ZOOM CLOSER IF RESULTS ARE MAXED OUT.
+            </p>
+
+        </nav>
+
+        <header></header>
+
+        <main>
+            <div id="map"></div>
+        </main>
+
+        <!-- Area to display flickr image thumbnails -->
+        <!--
+        Help on implementation of highlighting from stackoverflow:
+        http://stackoverflow.com/questions/24391390/highlight-table-row-using-knockout-js
+        -->
+        <section data-bind="visible: photoList">
+            <div data-bind="foreach: photoList" class="thumbGallery">
+                <div data-bind="visible: $data.visible">
+                    <div class="thumbContainer" data-bind="click: $parent.highlightedRowIndex.bind(null, $index)">
+                        <figure>
+                            <a data-bind="attr: function() { href: $data.extUrl; id: $data.photoId }">
+                                <img data-bind="attr: { src: $data.thumbUrl }, click: $parent.setCurrentListItem">
+                            </a>
+                        </figure>
+                        <div class="likeCountBar" data-bind="visible: $parent.highlightedRowIndex() == $index">
+                            <div data-bind="click: $parent.hideListItem" class="removeButton">
+                                <i class="fa fa-times fa-2"></i>
+                            </div>
+                        </div>
+                        <div class="heartSelector" data-bind="css: { highlightedHeart: $data.giveLove() > 0 }, click: $parent.toggleLove">
+                            <i class="fa fa-heart fa-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="noResultsMsg" data-bind="visible: photoList().length < 1">
+                <h4>NO RESULTS RETURNED</h4>
+                <p>TRY SEARCHING A LARGER AREA, OR</p>
+                <div class="setLocation">
+                    <input id="setLocation" data-bind="value: $root.newPlace" placeholder="SET LOCATION">
+                    <span data-bind="click: $root.changePlace" id="setLocationBtn">
+                        <i class="fa fa-arrow-right fa-4x"></i>
+                    </span>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDSaegrU_zF0J2MwFn4H63DdnTphCmuah0&libraries=places" onerror="googleFailure()">
+    </script>
+    <!--<script src="js/all.js"></script>-->
+    <script src="static/js/1-jquery.min.js"></script>
+    <script src="static/js/2-jquery-ui.js"></script>
+    <script src="static/js/3-knockout-3.4.0.js"></script>
+    <script src="static/js/snap.svg-min.js"></script>
+    <script src="static/js/4-script.js"></script>
+
+</body>
+</html>

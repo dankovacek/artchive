@@ -1,0 +1,41 @@
+{% extends 'index.html' %}
+{% block content %}
+<div class="item-dash">
+    <div class="flex-container row text-center">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="flash-msg-container text-center col-xs-12 col-sm-8">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% for item in items %}
+        <div class="item-container col-xs-12 col-sm-6 col-md-4 col-lg-2">
+            <a href="{{ url_for('single_item', user_id=item.user_id, item_id=item.id ) }}">
+                <h2 class="item-title">{{ item.name }}</h2>
+            </a>
+            <p class="item-description text-left">{{ item.description }}</p>
+            {% if item.item_image_path %}
+            <div class="item-image-container text-center">
+                <img src="{{ item.item_image_path }}" class="item-image">
+            </div>
+            {% endif %}
+            {% if user.id == item.user_id %}
+            <a href="{{ url_for('edit_item', user_id=item.user_id, item_id=item.id ) }}">
+                <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+            {% else %}
+            <a href="{{ url_for('my_items', user_id=item.user_id ) }}">
+                <p class="user-link">{{ item.user.name }}</p>
+            </a>
+            {% endif %}
+            <p class="text-right price-text">${{ item.price }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+

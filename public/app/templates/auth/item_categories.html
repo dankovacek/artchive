@@ -1,0 +1,22 @@
+{% extends 'index.html' %}
+{% block content %}
+<div class="flex-container">
+
+    <div class="category-dash text-center">
+        <h2>Item Categories</h2>
+        <h4>Select a category to see all corresponding items:</h4>
+        {% if categories %}
+        <div class="category-page-label-container">
+            {% for category in categories %}
+            <a href="{{ url_for('items_by_category', category_id=category.id ) }}" class="category-label">
+            {{ category.name }}
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <h4 class="category-listing">No categories have been entered in the database</h4>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
