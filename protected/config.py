@@ -1,5 +1,5 @@
 # Statement for enabling the development environment
-DEBUG = True
+DEBUG = False
 
 # Define the application directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -8,6 +8,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # SQLite for this example
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR,
 'artchive.db')
+
+print 'SQLALCHEMY_DATABASE_URI = ', SQLALCHEMY_DATABASE_URI
 DATABASE_CONNECT_OPTIONS = {}
 
 # Application threads. A common general assumption is
@@ -17,7 +19,7 @@ DATABASE_CONNECT_OPTIONS = {}
 THREADS_PER_PAGE = 2
 
 # Enable protection agains *Cross-site Request Forgery (CSRF)*
-CSRF_ENABLED     = True
+CSRF_ENABLED = True
 
 # Use a secure, unique and absolutely secret key for
 # signing the data.

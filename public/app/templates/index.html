@@ -4,9 +4,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-    <title>GraFFoTo - Virtual Graffiti Tours</title>
-    <link rel="stylesheet" href="static/css/style.css">
-    <link rel="stylesheet" href="static/css/font-awesome.min.css">
+    <title>The Artchive Project - Street Art History</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=News+Cycle" rel="stylesheet">
     <link rel="icon" href="favicon.ico">
 </head>
@@ -115,11 +115,11 @@
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDSaegrU_zF0J2MwFn4H63DdnTphCmuah0&libraries=places" onerror="googleFailure()">
     </script>
     <!--<script src="js/all.js"></script>-->
-    <script src="static/js/1-jquery.min.js"></script>
-    <script src="static/js/2-jquery-ui.js"></script>
-    <script src="static/js/3-knockout-3.4.0.js"></script>
-    <script src="static/js/snap.svg-min.js"></script>
-    <script src="static/js/4-script.js"></script>
+    <script src="{{ url_for('static', filename='js/1-jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/2-jquery-ui.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/3-knockout-3.4.0.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/snap.svg-min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/4-script.js') }}"></script>
 
 </body>
 </html>

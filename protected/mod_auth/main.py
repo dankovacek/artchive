@@ -8,7 +8,7 @@ from models.models import User
 from conxn_manager.conxn_manager import SessionManager
 
 import cgi
-import httplib2
+#import httplib2
 import jinja2
 import json
 import os
@@ -19,8 +19,9 @@ import string
 import sys
 
 # import the db
-from app import db
-from app import graffikiApp
+#sys.path.insert(0, os.path.abspath('..'))
+#from __init__ import db
+#from __init__ import graffikiApp
 
 # create the mod_auth blueprint that gets registered in
 # init.py
@@ -35,9 +36,10 @@ class MainAppManager(SessionManager):
 
     @app.route('/')
     def Main():
-        #currentUser = helpers.get_current_user()
-        #items = helpers.get_all_items()
-        return render_template('index.html')#, items=items, user=currentUser)
+        currentUser = None# helpers.get_current_user()
+        items = None #helpers.get_all_items()
+        return render_template('index.html')
+        #, items=items, user=currentUser)
 
     # # display only the current user's items
     # @app.route('/users/<int:user_id>/')
@@ -67,3 +69,12 @@ class MainAppManager(SessionManager):
     #                 helpers.edit_delete_item(currentItem)
     #                 flash("Item deleted.")
     #                 return redirect('/users/' + str(currentUser.id) + '/')
+
+
+# if __name__ == '__main__':
+#     # detects changes and automatically restarts server
+#     app.secret_key = helpers.get_api_key(
+#         'secret_key', 'web', 'client_secret')
+#     app.debug = True
+#     # app.session_interface = ItsdangerousSessionInterface()
+#     app.run(host='0.0.0.0', port=5050)

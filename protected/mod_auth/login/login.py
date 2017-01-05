@@ -5,10 +5,10 @@ from flask import Flask, url_for, render_template, request
 from flask import redirect, session, make_response, flash, jsonify
 
 from flask import Blueprint
-from mod_auth.helper_fns.helper_fns import helperManager
-from mod_auth.conxn_manager.conxn_manager import SessionManager
+from protected.mod_auth.helper_fns.helper_fns import helperManager
+from protected.mod_auth.conxn_manager.conxn_manager import SessionManager
 
-from mod_auth.models.models import Base, User, dbSession
+from protected.mod_auth.models.models import Base, User, dbSession
 
 import cgi
 import httplib2
