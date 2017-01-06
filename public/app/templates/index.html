@@ -11,8 +11,16 @@
     <link rel="icon" href="favicon.ico">
 </head>
 <body>
+    <!-- <div class="login-fullpage" data-bind="visible: toggleLogin">
+        {# {% include 'login_window.html' %} #}
+    </div> -->
+    <!-- <button class="login-btn" data-bind="click: toggleLogin">LOGIN
+    </button> -->
+
     <div class="loader">
-        <svg id="splashLogo"></svg>
+        <div id="logo-container">
+            <svg id="splashLogo"></svg>
+        </div>
         <div class="geoPermission">
             <button class="useMyLocation" data-bind="click: getInitialGeoLocation">USE CURRENT LOCATION</button>
             <div class="setLocation">
@@ -114,12 +122,10 @@
 
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDSaegrU_zF0J2MwFn4H63DdnTphCmuah0&libraries=places" onerror="googleFailure()">
     </script>
-    <!--<script src="js/all.js"></script>-->
-    <script src="{{ url_for('static', filename='js/1-jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/2-jquery-ui.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/3-knockout-3.4.0.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/snap.svg-min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/4-script.js') }}"></script>
+
+    <!-- [START footer js] -->
+    {% include 'foot.html' %}
+    <!-- [END footer js] -->
 
 </body>
 </html>

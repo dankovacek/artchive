@@ -2,7 +2,6 @@ from flask import Flask, url_for, render_template, request, Blueprint
 from flask import redirect, session, make_response, flash, jsonify
 
 from helper_fns.helper_fns import helperManager
-from login.login import login_ext
 #from modules.database_setup import database_setup
 from models.models import User
 from conxn_manager.conxn_manager import SessionManager
@@ -23,21 +22,21 @@ import sys
 # create the mod_auth blueprint that gets registered in
 # init.py
 #mod_auth = Blueprint('auth', __name__, url_prefix='/auth')
-app = Blueprint('default', __name__)
+main_app = Blueprint('main_app', __name__)
 
 # create an instance of helperManager class to access helper functions
 helpers = helperManager()
 
 class MainAppManager(SessionManager):
     """ Main routing features for app. """
-    @app.route('/')
+    @main_app.route('/')
     def Main():
         currentUser = None# helpers.get_current_user()
         items = None #helpers.get_all_items()
         return render_template('index.html')
         #, items=items, user=currentUser)
 
-    @app.route('/api_key_query')
+    @main_app.route('/api_key_query')
     def key_query():
         """Routing for Google Maps API key retrieval."""
         # Get Flickr API Key

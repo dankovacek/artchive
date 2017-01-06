@@ -7,9 +7,9 @@
    xmlns="http://www.w3.org/2000/svg"
    version="1.1"
    id="svg2"
-   viewBox="0 0 218.28762 39.992171"
-   height="11.286679mm"
-   width="61.605618mm">
+   viewBox="0 0 123.75355 107.27953"
+   height="30.276667mm"
+   width="34.925999mm">
   <defs
      id="defs4" />
   <metadata
@@ -25,28 +25,30 @@
     </rdf:RDF>
   </metadata>
   <g
-     transform="translate(-196.54961,-214.05034)"
-     id="logo_text">
-    <flowRoot
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:125%;font-family:'Playfair Display';-inkscape-font-specification:'Playfair Display';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       id="flowRoot4354"
-       xml:space="preserve"><flowRegion
-         id="flowRegion4356"><rect
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Playfair Display';-inkscape-font-specification:'Playfair Display'"
-           y="162.41782"
-           x="553.5636"
-           height="155.56349"
-           width="139.40105"
-           id="rect4358" /></flowRegion><flowPara
-         id="flowPara4360" /></flowRoot>    <text
-       id="text4384"
-       y="251.81631"
-       x="196.47467"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:125%;font-family:'Playfair Display';-inkscape-font-specification:'Playfair Display';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     transform="translate(-70.04787,-115.68114)"
+     id="layer1">
+    <text
+       id="text4136"
+       y="151.30614"
+       x="131.95128"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:88.99999857%;font-family:'Bitstream Charter';-inkscape-font-specification:'Bitstream Charter';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        xml:space="preserve"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Bebas;-inkscape-font-specification:Bebas;letter-spacing:10px;fill:#000000"
-         y="251.81631"
-         x="196.47467"
-         id="tspan4386">graffiki</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:88.99999857%;font-family:Bebas;-inkscape-font-specification:Bebas;text-align:center;text-anchor:middle;fill:#999999"
+         y="151.30614"
+         x="131.95128"
+         id="tspan4138">THE<tspan
+   id="tspan4204"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:88.99999857%;font-family:Bebas;-inkscape-font-specification:Bebas;fill:#000000">ART</tspan></tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:88.99999857%;font-family:Bebas;-inkscape-font-specification:Bebas;text-align:center;letter-spacing:-0.32000005px;word-spacing:0px;text-anchor:middle;fill:#000000"
+         id="tspan4196"
+         y="186.90614"
+         x="131.79128"><tspan
+   dx="0"
+   id="tspan4206"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:88.99999857%;font-family:Bebas;-inkscape-font-specification:Bebas;letter-spacing:-0.32000005px;word-spacing:0px;fill:#a8a8a8">P</tspan>CHIVE</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:88.99999857%;font-family:Bebas;-inkscape-font-specification:Bebas;text-align:center;letter-spacing:-0.62000006px;text-anchor:middle;fill:#a8a8a8"
+         id="tspan4198"
+         y="222.50613"
+         x="131.64128">ROJECT</tspan></text>
   </g>
 </svg>

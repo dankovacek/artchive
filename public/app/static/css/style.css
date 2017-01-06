@@ -13,65 +13,8 @@ body {
     height: 40vh;
 }
 
-/* START Thumb Gallery Styles */
-
-figure{
-    margin: 5px;
-}
-
-.likeCountBar {
-    position: relative;
-    bottom: 40px;
-    float: left;
-    padding: 0 5px;
-    font-size: 1.75em;
-    color: #eee;
-    background-color: rgba(0,0,0,0.5);
-    border-top-right-radius: 10px;
-    margin-left: 5px;
-}
-
-.heartSelector {
-    position: relative;
-    bottom: 40px;
-    padding: 0 5px;
-    font-size: 1.75em;
-    color: rgba(255,178,178,0.5);
-    background-color: rgba(255,255,255,0.3)
-    border-top-left-radius: 10px;
-    float: right;
-    margin-right: 5px;
-}
-
-.highlightedHeart {
-    color: #a00;
-    background-color: rgba(255,255,255,0.3);
-    font-size: 1.9em;
-}
-
-section {
-    min-height: 60vh;
-}
-
-.thumbGallery {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-/* END Thumb Gallery Styles */
-
 /* END Main Page Styles */
 
-nav div a i.fa {
-    color: #eee;
-    margin:5px;
-}
-
-.infoWindow {
-    color: #eee;
-    font-size: 1.5em;
-    padding: 5px;
-}
 
 /* START Splash Page Styles */
 
@@ -119,12 +62,19 @@ input {
     z-index: 10;
 }
 
+#logo-container {
+  height: 40vh;
+  width: 100vw;
+  position: absolute;
+  top: 10vh;
+}
+
 #splashLogo {
-    position: absolute;
-    top: 0;
-    height: 50vh;
+    position: relative;
     padding: 0;
     margin: 0;
+    width: 100%;
+    height: 100%;
 }
 
 /* END Splash Page Styles */
@@ -217,4 +167,62 @@ input.userFilter {
   color: rgba(32, 170, 178, 0.5);;
 }
 
+nav div a i.fa {
+    color: #eee;
+    margin:5px;
+}
+
+.infoWindow {
+    color: #eee;
+    font-size: 1.5em;
+    padding: 5px;
+}
+
 /* END Side Navbar Styles */
+
+/* START Thumb Gallery Styles */
+
+figure{
+    margin: 5px;
+}
+
+.likeCountBar {
+    position: relative;
+    bottom: 40px;
+    float: left;
+    padding: 0 5px;
+    font-size: 1.75em;
+    color: #eee;
+    background-color: rgba(0,0,0,0.5);
+    border-top-right-radius: 10px;
+    margin-left: 5px;
+}
+
+.heartSelector {
+    position: relative;
+    bottom: 40px;
+    padding: 0 5px;
+    font-size: 1.75em;
+    color: rgba(255,178,178,0.5);
+    background-color: rgba(255,255,255,0.3)
+    border-top-left-radius: 10px;
+    float: right;
+    margin-right: 5px;
+}
+
+.highlightedHeart {
+    color: #a00;
+    background-color: rgba(255,255,255,0.3);
+    font-size: 1.9em;
+}
+
+section {
+    min-height: 60vh;
+}
+
+.thumbGallery {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/* END Thumb Gallery Styles */

@@ -69,7 +69,21 @@ var ViewModel = function() {
 
     var self = this;
 
+    // renders the svg logo on the landing page
     set_bg_image();
+
+    // Initialize the Login Flow
+    this.loginWindow = ko.observable(false);
+    // toggle the login buttons
+    var toggleLogin = function() {
+        switch (loginWindow()) {
+            case false:
+                loginWindow(true);
+                break;
+            case true:
+                loginWindow(false);
+        }
+    };
 
     //initialize a photos object
     this.photoList = ko.observableArray();
@@ -966,25 +980,49 @@ var set_bg_image = function() {
     var g = s.group();
 
     var logo = Snap.load('/static/images/artchivelogo_frontpage.svg', function(f) {
-        g.append(f);
-        var logo_svg = g.select("#logo_text");
+        var logo_svg = f.select("#layer1");
+        g.append(logo_svg);
         var logo_dims = logo_svg.getBBox();
-        var canvas_width = $(document).width();
-        var canvas_height = $(document).height();
-        console.log(logo_dims.height, canvas_height);
-        //g.transform('s2');
-        var init_x = ( (canvas_width - logo_dims.width) / 2.5 ).toString();
-        //canvas height gets divided by 4 because svg height is 50vh
-        var init_y = ( (canvas_height / 4 - logo_dims.height) / 2 ).toString();
+        var svg_canvas = document.getElementById("logo-container");
+        console.info(svg_canvas, 'svg canvas!');
+        var cvs_h = svg_canvas.offsetHeight;
+        var cvs_w = svg_canvas.offsetWidth;
+
+        // initial vertical % difference between logo and canvas
+        var initial_vscale_diff = cvs_h / g.getBBox().height;
+
+        console.log('old sizes: ', g.getBBox().height, g.getBBox().width);
+        // scaling factor, as % of actual height difference
+        // between logo and canvas
+        var sf = 0.8 * initial_vscale_diff;
+
+        // scale string for initial scale transform
+        //var s_str = 's' + sf.toString();
+        //g.transform(s_str);
+
+        // get updated logo dimensions after transform
+        logo_w = g.getBBox().width;
+        logo_h = g.getBBox().height;
+
+        //console.log(logo_w, logo_h, 'new sizes');
+
         // set initial placement in middle of canvas
-        t_string = 's1.1 t' + init_x.toString() + ' ' + init_y.toString();
-        g.transform(t_string);
-        //g.transform('S1.2 ' + t_string);
-        // var sf = (canvas_width -40) / logo_dims.width;
+        var xi = ((cvs_w - logo_w * sf) / 2.0);
+        var yi = ((cvs_h - logo_h * sf) / 2.0);
+
+        //  Define a transform matrix
+        var logoMatrix = new Snap.Matrix();
+
+        logoMatrix.translate(xi, yi);
+        logoMatrix.scale(sf);
+        g.transform(logoMatrix);
+        //console.log('xi, yi', xi, yi);
+        //t_string = s_str + ' t' + xi.toString() + ' ' + yi.toString();
+        //g.transform(t_string);
+        // g.transform('S5 ' + t_string);
+        // var sf = (canvas_width - 100) / logo_dims.width;
         // var transform_str = 's' + sf.toString();
         // console.log(init_x, init_y);
-        // init_x = (0.8*parseInt(init_x) / sf).toString();
-        // init_y = (0.5*parseInt(init_y) / sf).toString();
         // transform_str += ' t' + init_x + ' ' + init_y;
         // g.animate({
         //     transform: transform_str

@@ -26,8 +26,9 @@ import sys
 helpers = helperManager()
 
 # create the mod_auth blueprint that gets registered in
-# init.py
-login_ext = Blueprint('login_ext', __name__, url_prefix='/login')
+# __init__.py
+static_folder = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'public/app/static')
+login_ext = Blueprint('login_ext', __name__)
 
 CLIENT_ID = helpers.get_api_key('oauth2', 'web', 'client_id')
 

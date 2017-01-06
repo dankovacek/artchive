@@ -10,6 +10,12 @@ from flask import Flask, render_template
 # Import SQLAlchemy
 from flask_sqlalchemy import SQLAlchemy
 
+# Import main and login python files as separate modules
+# and register them so routing can occur from separate files
+from mod_auth.login.login import login_ext
+from mod_auth.main import main_app
+
+
 import os
 import sys
 
@@ -29,6 +35,10 @@ app = Flask(__name__, template_folder=template_folder, static_folder=static_fold
 # Point the path to the parent directory
 app.config.from_object('protected.config')
 app.config.from_pyfile('config/config.py')
+
+# Register the Blueprint sub-components for main and login
+app.register_blueprint(login_ext)
+app.register_blueprint(main_app)
 
 # Define the database object which is imported
 # by modules and controllers
@@ -63,12 +73,3 @@ if not app.config['DEBUG']:
 @app.errorhandler(404)
 def not_found(error):
     return render_template('404.html'), 404
-
-# Import module / components using their blueprint handler variable (mod_auth)
-from mod_auth.main import app as default_module
-from mod_auth.login.login import login_ext
-
-# Register blueprints
-app.register_blueprint(default_module)
-#graffikiApp.register_blueprint(auth_module)
-app.register_blueprint(login_ext)
