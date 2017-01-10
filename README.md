@@ -1,4 +1,4 @@
-# Project Graffiki dot org
+# The Artchive Project
 
 A platform for documenting, archiving, and studying street art.
 
@@ -6,11 +6,9 @@ A platform for documenting, archiving, and studying street art.
 
 #### Install Dependencies for Python (2.7) Development Environment
 
-Follow the setup portion of this [DigitalOcean tutorial.](https://www.digitalocean.com/community/tutorials/how-to-structure-large-flask-applications)
+Follow the setup portion of this [DigitalOcean tutorial.](https://www.digitalocean.com/community/tutorials/how-to-structure-large-flask-applications).
 
-TL;DR:
-`$ apt-get install pip`
-`$ pip install virtualenv`
+See `requirements.txt`
 
 Start the development server from the root directory (/artchive):
 `$ python run.py`
