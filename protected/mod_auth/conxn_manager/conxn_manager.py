@@ -10,8 +10,6 @@ instance_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__f
 
 Base = declarative_base()
 
-print 'creating db?: ', 'sqlite:///' + BASE_DIR + '/artchive.db'
-
 #engine = create_engine('sqlite:///' + os.path.join(BASE_DIR, 'artchive.db'))
 engine = engine_from_config(os.path.dirname(os.path.join(BASE_DIR, 'config.py')), url='sqlite:///' + BASE_DIR + '/artchive.db')
 Base.metadata.bind = engine

@@ -16,13 +16,10 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
     email = Column(String(80), unique=True, nullable=False)
+    picture = Column(String(200), nullable=True)
     provider = Column(String(200))
     provider_id = Column(String(200))
     created = Column(DateTime, default=datetime.utcnow())
-
-    def __init__(self, name, email):
-        self.name = name
-        self.email = email
 
     # For printing User objects for debugging
     def __repr__(self):

@@ -2,6 +2,12 @@
 # as well as .git folder so it doesn't get copied
 # to the production environment
 
+# to see all tracked files:
+# git ls-tree --full-tree -r --name-only HEAD
+
+# to clear ignored files that are cached
+# git rm --cached -r -f .
+
 logs/
 private/
 tmp/

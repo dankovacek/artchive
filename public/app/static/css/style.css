@@ -13,6 +13,17 @@ body {
     height: 40vh;
 }
 
+main {
+  position: fixed;
+  z-index: 11;
+}
+
+section {
+  position: relative;
+  top: 40vh;
+  z-index: 10;
+}
+
 /* END Main Page Styles */
 
 
@@ -25,7 +36,7 @@ button {
     color: #fff;
     width: 280px;
     margin-bottom: 20px;
-    font-size: 1.25em;
+    font-size: 1.1em;
     font-family: "News Cycle", sans-serif;
     /*box-shadow: 3px 3px 3px #222;*/
 }
@@ -37,6 +48,8 @@ button a {
 
 .fa-arrow-right {
     color: #333;
+    margin-left: 1em;
+    margin-right: 1em;
 }
 
 .geoPermission {
@@ -64,7 +77,7 @@ input {
     width: 100vw;
     height: 100vh;
     background: #fff;
-    z-index: 10;
+    z-index: 12;
 }
 
 a#login-btn {
@@ -75,7 +88,7 @@ a#login-btn {
   height: 10vh;
   color: #333;
   background-color: #fff;
-  font-size: 1.5em;
+  font-size: 1.1em;
   text-align: right;
 }
 
@@ -97,6 +110,28 @@ a#login-btn {
 /* END Splash Page Styles */
 
 /* START Side Navbar Styles */
+.infoWindow {
+    color: #eee;
+    font-size: 1.5em;
+    padding: 5px;
+}
+
+.sidebar-name {
+  float: left;
+  margin-left: 1.5em;
+  color: #fff;
+}
+
+.sidebar-logout {
+  float: right;
+  margin-right: 1.5em;
+  color: #fff;
+}
+
+.profile-img {
+  width: 100%;
+  border-radius: 1em;
+}
 
 .Offscreen {
   height: 100%;
@@ -109,7 +144,7 @@ a#login-btn {
 }
 .Offscreen.is-Open {
     transform: translate3d(0, 0, 0);
-    z-index: 1;
+    z-index: 13;
 }
 .Button {
     position: absolute;
@@ -165,8 +200,8 @@ input.userFilter {
 }
 
 .Nav-List {
-  padding: 4em 2em;
-  z-index: 1;
+  padding: 1.5em 2em;
+  z-index: 13;
 }
 .Nav-List ul,
 .Nav-List li {
@@ -177,7 +212,7 @@ input.userFilter {
   line-height: 1.25em;
 }
 .Nav-List a {
-  color: #555;
+  color: #fff;
   text-decoration: none;
 }
 .Nav-List a:hover {
@@ -187,12 +222,6 @@ input.userFilter {
 nav div a i.fa {
     color: #eee;
     margin:5px;
-}
-
-.infoWindow {
-    color: #eee;
-    font-size: 1.5em;
-    padding: 5px;
 }
 
 /* END Side Navbar Styles */

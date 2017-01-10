@@ -55,35 +55,16 @@ class LoginManager(SessionManager):
         else:
             return redirect('/')
 
-        # if 'credentials' not in session:
-        #     return redirect(url_for('login_ext.oauth2callback'))
-        # credentials = OAuth2Credentials.from_json(session['credentials'])
-        # if credentials.access_token_expired:
-        #     return redirect(url_for('login_ext.oauth2callback'))
-        # else:
-        #     http_auth = credentials.authorize(httplib2.Http())
-        #     #drive_service = discovery.build('drive', 'v2', http_auth)
-        #     #files = drive_service.files().list().execute()
-        #     return redirect('/')  #json.dumps(files)
-        #
-        # state = ''.join(
-        # random.choice(
-        #     string.ascii_uppercase + string.digits)
-        # for x in xrange(32))
-        # session['state'] = state
-
     @login_ext.route('/gconnect')
     def gconnect():
         if 'credentials' not in session:
             return redirect(url_for('login_ext.oauth2callback'))
-
         credentials = OAuth2Credentials.from_json(session['credentials'])
-
-        if credentials.access_token_expired:
+        if credentials.access_token_expired or not helpers.get_current_user():
             return redirect(url_for('login_ext.oauth2callback'))
         else:
             http_auth = credentials.authorize(httplib2.Http())
-            return render_template('index.html')
+            return redirect('/')
 
     # Google Oauth2 login flow
     @login_ext.route('/oauth2callback')
@@ -159,6 +140,7 @@ class LoginManager(SessionManager):
             # Store the access token in the session for later use.
             session['access_token'] = access_token
             session['provider_id'] = gplus_id
+            session['provider'] = 'google'
 
             # Get user info
             userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
@@ -166,35 +148,17 @@ class LoginManager(SessionManager):
             answer = requests.get(userinfo_url, params=params)
             data = answer.json()
 
-            session['username'] = data['name']
-
-            # If no username is specified (google requires only email)
-            # use the email address as username
-            if not data['name']:
-                email_str_ind = data['email'].index('@')
-                session['username'] = data['email'][0:email_str_ind]
-
-            session['picture'] = data['picture']
+            # store the current user by setting the session variable for email
             session['email'] = data['email']
-            # ADD PROVIDER TO LOGIN SESSION
-            session['provider'] = 'google'
+            data['provider'] = 'google'
+            data['provider_id'] = gplus_id
 
             # Check if user already exists
-            check_user = helpers.get_current_user()
-            if check_user is not None:
+            if helpers.check_if_user_exists(data['email']) is not None:
                 return redirect('/')
 
             # add the new user to the database
-            new_user = helpers.create_new_user(session)
-            # output = ''
-            # output += '<h1>Welcome, '
-            # output += session['username']
-            # output += '!</h1>'
-            # output += '<img src="'
-            # output += session['picture']
-            # output += ' " class="welcome-picture">'
-            # store the successful login in flash object
-            # flash("Welcome, " + session['username'] + '!')
+            new_user = helpers.create_new_user(data)
             return redirect('/')
 
     # Facebook Oauth2 login flow
@@ -327,7 +291,7 @@ class LoginManager(SessionManager):
     # function
     @helpers.login_required
     @login_ext.route('/logout')
-    def Disconnect():
+    def logout():
         login_mgr = LoginManager()
         if 'provider' in session:
             provider = session['provider']
@@ -335,12 +299,9 @@ class LoginManager(SessionManager):
                 login_mgr.GDisconnect()
             if provider == 'facebook':
                 login_mgr.FbDisconnect()
-            del session['username']
-            del session['provider_id']
-            del session['email']
-            del session['picture']
-            del session['provider']
-            del session['access_token']
+            keys = [key for key in session]
+            for k in keys:
+                del session[k]
             print("Logout successful.")
         else:
             print("You were not logged in to begin with.")

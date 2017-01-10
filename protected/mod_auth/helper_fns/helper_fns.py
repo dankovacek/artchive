@@ -35,7 +35,7 @@ class helperManager(SessionManager):
             if 'email' in session:
                 return f(*args, **kwargs)
             else:
-                flash('You do how have access permission')
+                flash('You do not have access permission')
                 return redirect('/login')
         return decorated_function
 
@@ -58,7 +58,7 @@ class helperManager(SessionManager):
                                 api_type, descriptor)
 
     def get_current_user(self):
-        """Retrieves the current user by email address"""
+        """Retrieves the current user by email stored in the session variable address and returns user object"""
         try:
             email = session['email']
             user = self.dbSession.query(User).filter_by(email=email).one()
@@ -66,8 +66,16 @@ class helperManager(SessionManager):
         except Exception:
             return None
 
+    def get_user_by_email(self, email):
+        """Retrieves User object from db with email address as input."""
+        try:
+            user = self.dbSession.query(User).filter_by(email=email).one()
+            return user
+        except Exception:
+            return None
+
     def get_current_user_id(self):
-        """Retrieves the current user by email address"""
+        """Retrieves the current user by email address and returns user id"""
         try:
             email = session['email']
             user = self.dbSession.query(User).filter_by(email=email).one()
@@ -75,18 +83,27 @@ class helperManager(SessionManager):
         except Exception:
             return None
 
-    def create_new_user(self, session_obj):
+    def check_if_user_exists(self, email):
+        """Checks to see if a user is already registered."""
+        try:
+            user = self.dbSession.query(User).filter_by(email=email).one()
+            return user.email
+        except Exception:
+            return None
+
+    def create_new_user(self, data):
         # Ensure duplicate users aren't added to the database.
         # Each user must have a unique email address.
-        current_user = self.get_current_user()
-        if current_user is None:
+        if self.check_if_user_exists(data['email']) is None:
             # create new user object
-            new_user = User(session_obj['username'], session_obj['email'])
-            # new_user.name = session_obj['username']
-            # new_user.email = session_obj['email']
-            new_user.picture = session_obj['picture']
-            new_user.provider = session_obj['provider']
-            new_user.provider_id = session_obj['provider_id']
+            new_user = User()
+            print data
+            new_user.name = data['name']
+            new_user.email = data['email']
+            new_user.picture = data['picture']
+            # Store the provider of Oauth2 login
+            new_user.provider = data['provider']
+            new_user.provider_id = data['provider_id']
             # add new_user to session staging area and commit
             self.dbSession.add(new_user)
             self.dbSession.commit()
