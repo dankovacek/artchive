@@ -1,0 +1,17 @@
+# Ignore all folders except public folder
+# as well as .git folder so it doesn't get copied
+# to the production environment
+
+/logs
+/private
+/tmp
+/ENV
+/protected/secret_key
+# don't track protected files with api keys
+/protected/api_keys
+
+# ignore all .pyc files
+*.pyc
+
+# ignore git files
+.git
