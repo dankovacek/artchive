@@ -25,9 +25,14 @@ button {
     color: #fff;
     width: 280px;
     margin-bottom: 20px;
-    font-size: 1em;
+    font-size: 1.25em;
     font-family: "News Cycle", sans-serif;
     /*box-shadow: 3px 3px 3px #222;*/
+}
+
+button a {
+  text-decoration: none;
+  color: #fff;
 }
 
 .fa-arrow-right {
@@ -60,6 +65,18 @@ input {
     height: 100vh;
     background: #fff;
     z-index: 10;
+}
+
+a#login-btn {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  text-decoration: none;
+  height: 10vh;
+  color: #333;
+  background-color: #fff;
+  font-size: 1.5em;
+  text-align: right;
 }
 
 #logo-container {
@@ -226,3 +243,30 @@ section {
 }
 
 /* END Thumb Gallery Styles */
+
+/* START Login Page Styles */
+
+#login-main {
+  position: absolute;
+  top: 50vh;
+  width: 100vw;
+  height: 50vh;
+  text-align: center;
+  background-color: #f7f7f7;
+  font-family: 'News Cycle', sans-serif;
+  font-style: normal;
+  font-weight: 100;
+  line-height: 24px;
+}
+
+.login-header {
+  width: 80vw;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.login-main {
+  text-align: center;
+}
+
+/* END Login Page Styles */

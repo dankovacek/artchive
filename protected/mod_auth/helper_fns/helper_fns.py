@@ -5,8 +5,6 @@ from functools import wraps
 import sys
 import os
 
-#sys.path.insert(0, os.path.abspath('..'))
-
 from protected.mod_auth.models.models import User
 from protected.mod_auth.conxn_manager.conxn_manager import dbSession, Base
 from protected.mod_auth.conxn_manager.conxn_manager import SessionManager
@@ -25,8 +23,7 @@ import hmac
 import jinja2
 
 # create the path to the instance folder for accessing files
-INSTANCE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                            os.pardir, os.pardir))
+INSTANCE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 INSTANCE_DIR += '/api_keys'
 
@@ -84,9 +81,9 @@ class helperManager(SessionManager):
         current_user = self.get_current_user()
         if current_user is None:
             # create new user object
-            new_user = User()
-            new_user.name = session_obj['username']
-            new_user.email = session_obj['email']
+            new_user = User(session_obj['username'], session_obj['email'])
+            # new_user.name = session_obj['username']
+            # new_user.email = session_obj['email']
             new_user.picture = session_obj['picture']
             new_user.provider = session_obj['provider']
             new_user.provider_id = session_obj['provider_id']

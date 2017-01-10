@@ -8,11 +8,11 @@ from protected.mod_auth.conxn_manager.conxn_manager import Base, engine
 from protected.mod_auth.conxn_manager.conxn_manager import dbSession
 from protected.mod_auth.conxn_manager.conxn_manager import SessionManager
 
-import os
-import sys
+# import os
+# import sys
 
 class User(Base):
-    __tablename__ = 'auth_user'
+    __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
     email = Column(String(80), unique=True, nullable=False)
@@ -21,9 +21,11 @@ class User(Base):
     created = Column(DateTime, default=datetime.utcnow())
 
     def __init__(self, name, email):
-
         self.name = name
         self.email = email
 
+    # For printing User objects for debugging
     def __repr__(self):
         return '<User %r>' % (self.name)
+
+Base.metadata.create_all(engine)

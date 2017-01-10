@@ -2,7 +2,6 @@ from flask import Flask, url_for, render_template, request, Blueprint
 from flask import redirect, session, make_response, flash, jsonify
 
 from helper_fns.helper_fns import helperManager
-#from modules.database_setup import database_setup
 from models.models import User
 from conxn_manager.conxn_manager import SessionManager
 
@@ -17,11 +16,9 @@ import requests
 import string
 import sys
 
-#sys.path.insert(0, os.path.abspath('..'))
-
 # create the mod_auth blueprint that gets registered in
 # init.py
-#mod_auth = Blueprint('auth', __name__, url_prefix='/auth')
+# mod_auth = Blueprint('auth', __name__, url_prefix='/auth')
 main_app = Blueprint('main_app', __name__)
 
 # create an instance of helperManager class to access helper functions
@@ -30,11 +27,18 @@ helpers = helperManager()
 class MainAppManager(SessionManager):
     """ Main routing features for app. """
     @main_app.route('/')
-    def Main():
-        currentUser = None# helpers.get_current_user()
-        items = None #helpers.get_all_items()
-        return render_template('index.html')
-        #, items=items, user=currentUser)
+    def index():
+        """Check if user is logged in.  If not, set state token
+        for login flow."""
+        currentUser = helpers.get_current_user()
+        if currentUser:
+            items = None #helpers.get_all_items()
+            #state = None
+            return render_template('index.html', user=currentUser)
+        else:
+            print 'no current user'
+            return redirect('/login')
+    #     #, items=items, user=currentUser)
 
     @main_app.route('/api_key_query')
     def key_query():
@@ -71,12 +75,3 @@ class MainAppManager(SessionManager):
     #                 helpers.edit_delete_item(currentItem)
     #                 flash("Item deleted.")
     #                 return redirect('/users/' + str(currentUser.id) + '/')
-
-
-# if __name__ == '__main__':
-#     # detects changes and automatically restarts server
-#     app.secret_key = helpers.get_api_key(
-#         'secret_key', 'web', 'client_secret')
-#     app.debug = True
-#     # app.session_interface = ItsdangerousSessionInterface()
-#     app.run(host='0.0.0.0', port=5050)

@@ -4,8 +4,8 @@
 # app.config.setdefault('SQLALCHEMY_TRACK_MODIFICATIONS', True)
 # was originally None, but changed to suppress warning.
 
-# Import flask and template operators
-from flask import Flask, render_template
+# Import flask
+from flask import Flask
 
 # Import SQLAlchemy
 from flask_sqlalchemy import SQLAlchemy
@@ -15,14 +15,14 @@ from flask_sqlalchemy import SQLAlchemy
 from mod_auth.login.login import login_ext
 from mod_auth.main import main_app
 
+# Import all models before the db.create_all() function is executed
+from mod_auth.models.models import User
 
 import os
 import sys
 
 # define the templates folder
 template_folder = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'public/app/templates')
-#define the config folder
-# d = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 static_folder = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'public/app/static')
 
@@ -34,7 +34,7 @@ app = Flask(__name__, template_folder=template_folder, static_folder=static_fold
 # Configurations
 # Point the path to the parent directory
 app.config.from_object('protected.config')
-app.config.from_pyfile('config/config.py')
+#app.config.from_pyfile(os.path.join(instance_path, 'config/config.py'))
 
 # Register the Blueprint sub-components for main and login
 app.register_blueprint(login_ext)

@@ -1,5 +1,8 @@
 from oauth2client.client import flow_from_clientsecrets
-from oauth2client.client import FlowExchangeError
+from oauth2client.client import FlowExchangeError, OAuth2Credentials
+from oauth2client.file import Storage
+
+from apiclient.discovery import build
 
 from flask import Flask, url_for, render_template, request
 from flask import redirect, session, make_response, flash, jsonify
@@ -34,9 +37,9 @@ CLIENT_ID = helpers.get_api_key('oauth2', 'web', 'client_id')
 
 APPLICATION_NAME = "artchive"
 
-INSTANCE_DIR = os.path.join(os.path.dirname(__file__),
-                            os.pardir, os.pardir, 'instance')
+#STORAGE = Storage('gmail.storage')
 
+INSTANCE_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'api_keys')
 
 class LoginManager(SessionManager):
     # Login and Authorization
@@ -46,23 +49,159 @@ class LoginManager(SessionManager):
     def ShowLogin():
         """Render login page if user session doesn't exist.
         Otherwise, redirect to the main page."""
-        if request.method == 'GET':
-            current_user = helpers.get_current_user()
-            if current_user is None:
-                state = ''.join(
-                    random.choice(
-                        string.ascii_uppercase + string.digits)
-                    for x in xrange(32))
-                session['state'] = state
-                return render_template("login.html", STATE=state, user=None)
-            else:
+        current_user = helpers.get_current_user()
+        if current_user is None:
+            return render_template('login.html')
+        else:
+            return redirect('/')
+
+        # if 'credentials' not in session:
+        #     return redirect(url_for('login_ext.oauth2callback'))
+        # credentials = OAuth2Credentials.from_json(session['credentials'])
+        # if credentials.access_token_expired:
+        #     return redirect(url_for('login_ext.oauth2callback'))
+        # else:
+        #     http_auth = credentials.authorize(httplib2.Http())
+        #     #drive_service = discovery.build('drive', 'v2', http_auth)
+        #     #files = drive_service.files().list().execute()
+        #     return redirect('/')  #json.dumps(files)
+        #
+        # state = ''.join(
+        # random.choice(
+        #     string.ascii_uppercase + string.digits)
+        # for x in xrange(32))
+        # session['state'] = state
+
+    @login_ext.route('/gconnect')
+    def gconnect():
+        if 'credentials' not in session:
+            return redirect(url_for('login_ext.oauth2callback'))
+
+        credentials = OAuth2Credentials.from_json(session['credentials'])
+
+        if credentials.access_token_expired:
+            return redirect(url_for('login_ext.oauth2callback'))
+        else:
+            http_auth = credentials.authorize(httplib2.Http())
+            return render_template('index.html')
+
+    # Google Oauth2 login flow
+    @login_ext.route('/oauth2callback')
+    def oauth2callback():
+        # Start OAuth2 flow to receive credentals from google
+        try:
+            flow = flow_from_clientsecrets(
+                    INSTANCE_DIR + '/client_secrets.json',
+                    scope='profile email',
+                    redirect_uri = url_for('login_ext.oauth2callback', _external=True))
+            # Check for already granted permissions
+            flow.params['include_granted_scopes'] = 'true'
+        except FlowExchangeError:
+            print 'FlowExchangeError'
+            response = make_response(
+                json.dumps('Failed to upgrade the authorization code.'),
+                401)
+            return response
+
+        if 'code' not in request.args:
+            auth_uri = flow.step1_get_authorize_url()
+            return redirect(auth_uri)
+        else:
+            auth_code = request.args.get('code')
+            credentials = flow.step2_exchange(auth_code)
+            session['credentials'] = credentials.to_json()
+
+            # Check that the access token is valid.
+            access_token = credentials.access_token
+            url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
+                   % access_token)
+            h = httplib2.Http()
+            result = json.loads(h.request(url, 'GET')[1])
+
+            # If there was an error in the access token info, abort.
+            if result.get('error') is not None:
+                print 'flowexchangeerror'
+                response = make_response(
+                    json.dumps(
+                        'There was an error in the access token info.'), 401)
+                return response
+
+            # Verify that the access token is used for the intended user.
+            gplus_id = credentials.id_token['sub']
+            if result['user_id'] != gplus_id:
+                response = make_response(
+                    json.dumps(
+                        "Token's user ID doesn't match given user ID."), 401)
+                return response
+                # write("Token's user ID doesn't match given user ID.")
+                # response.headers['Content-Type'] = 'application/json'
+
+            # Verify that the access token is valid for this app.
+            if result['issued_to'] != CLIENT_ID:
+                response = make_response(
+                    json.dumps("Token's client ID does not match app's."), 401)
+                return response
+                # write("Token's client ID does not match app's.")
+                # response.set_status(401)
+                # response.headers['Content-Type'] = 'application/json'
+
+            stored_token = session.get('access_token')
+            stored_gplus_id = session.get('gplus_id')
+
+            if stored_token is not None and gplus_id == stored_gplus_id:
+                response = make_response(
+                    json.dumps("Current user is already connected."), 200)
+                return response
+                # write('Current user is already connected.')
+                # response.set_status(200)
+                # response.headers['Content-Type'] = 'application/json'
+
+            # Store the access token in the session for later use.
+            session['access_token'] = access_token
+            session['provider_id'] = gplus_id
+
+            # Get user info
+            userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
+            params = {'access_token': credentials.access_token, 'alt': 'json'}
+            answer = requests.get(userinfo_url, params=params)
+            data = answer.json()
+
+            session['username'] = data['name']
+
+            # If no username is specified (google requires only email)
+            # use the email address as username
+            if not data['name']:
+                email_str_ind = data['email'].index('@')
+                session['username'] = data['email'][0:email_str_ind]
+
+            session['picture'] = data['picture']
+            session['email'] = data['email']
+            # ADD PROVIDER TO LOGIN SESSION
+            session['provider'] = 'google'
+
+            # Check if user already exists
+            check_user = helpers.get_current_user()
+            if check_user is not None:
                 return redirect('/')
+
+            # add the new user to the database
+            new_user = helpers.create_new_user(session)
+            # output = ''
+            # output += '<h1>Welcome, '
+            # output += session['username']
+            # output += '!</h1>'
+            # output += '<img src="'
+            # output += session['picture']
+            # output += ' " class="welcome-picture">'
+            # store the successful login in flash object
+            # flash("Welcome, " + session['username'] + '!')
+            return redirect('/')
 
     # Facebook Oauth2 login flow
     @login_ext.route('/fbconnect', methods=['GET', 'POST'])
-    def FbConnect():
+    def fbconnect():
         if request.method == 'GET':
-            return request()
+            return request
 
         if request.method == 'POST':
             # request.params['state']
@@ -139,117 +278,6 @@ class LoginManager(SessionManager):
             print 'Done!'
             return output
 
-    # Google Oauth2 login flow
-    @login_ext.route('/gconnect', methods=['POST'])
-    def GConnect():
-        if request.method == 'POST':
-            # Validate state token
-            if request.args.get('state', '') != session['state']:
-                response = make_response(json.dumps('State token error.'), 401)
-                return response
-
-            # Obtain authorizaton code
-            # flask uses request.data for files in the body,
-            # (instead of request.body)
-            code = request.data
-            try:
-                # Upgrade the authorization code into a credentials object
-                oauth_flow = flow_from_clientsecrets(
-                    INSTANCE_DIR + '/client_secrets.json', scope='')
-                oauth_flow.redirect_uri = 'postmessage'
-                credentials = oauth_flow.step2_exchange(code)
-            except FlowExchangeError:
-                print 'flowexchangeerror'
-                # response.headers['Content-Type'] = 'application/json'
-                response = make_response(
-                    json.dumps('Failed to upgrade the authorization code.'),
-                    401)
-                return response
-
-            # Check that the access token is valid.
-            access_token = credentials.access_token
-            url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
-                   % access_token)
-            h = httplib2.Http()
-            result = json.loads(h.request(url, 'GET')[1])
-
-            # If there was an error in the access token info, abort.
-            if result.get('error') is not None:
-                print 'flowexchangeerror'
-                response = make_response(
-                    json.dumps(
-                        'There was an error in the access token info.'), 401)
-                return response
-                # response.set_status(401)
-                # response.headers['Content-Type'] = 'application/json'
-
-            # Verify that the access token is used for the intended user.
-            gplus_id = credentials.id_token['sub']
-            if result['user_id'] != gplus_id:
-                response = make_response(
-                    json.dumps(
-                        "Token's user ID doesn't match given user ID."), 401)
-                return response
-                # write("Token's user ID doesn't match given user ID.")
-                # response.headers['Content-Type'] = 'application/json'
-
-            # Verify that the access token is valid for this app.
-            if result['issued_to'] != CLIENT_ID:
-                response = make_response(
-                    json.dumps("Token's client ID does not match app's."), 401)
-                return response
-                # write("Token's client ID does not match app's.")
-                # response.set_status(401)
-                # response.headers['Content-Type'] = 'application/json'
-
-            stored_token = session.get('access_token')
-            stored_gplus_id = session.get('gplus_id')
-
-            if stored_token is not None and gplus_id == stored_gplus_id:
-                response = make_response(
-                    json.dumps("Current user is already connected."), 200)
-                return response
-                # write('Current user is already connected.')
-                # response.set_status(200)
-                # response.headers['Content-Type'] = 'application/json'
-
-            # Store the access token in the session for later use.
-            session['access_token'] = access_token
-            session['provider_id'] = gplus_id
-
-            # Get user info
-            userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
-            params = {'access_token': credentials.access_token, 'alt': 'json'}
-            answer = requests.get(userinfo_url, params=params)
-            data = answer.json()
-
-            session['username'] = data['name']
-
-            # If no username is specified (google requires only email)
-            if not data['name']:
-                email_str_ind = data['email'].index('@')
-                session['username'] = data['email'][0:email_str_ind]
-
-            session['picture'] = data['picture']
-            session['email'] = data['email']
-            # ADD PROVIDER TO LOGIN SESSION
-            session['provider'] = 'google'
-
-            # Check if user already exists
-            check_user = helpers.get_current_user()
-            if check_user is not None:
-                return redirect('/')
-
-            new_user = helpers.create_new_user(session)
-            output = ''
-            output += '<h1>Welcome, '
-            output += session['username']
-            output += '!</h1>'
-            output += '<img src="'
-            output += session['picture']
-            output += ' " class="welcome-picture">'
-            print "done!"
-            return output
 
     # DISCONNECT - Revoke a current user's token and reset their login_session
     def GDisconnect(self):
