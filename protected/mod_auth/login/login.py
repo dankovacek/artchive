@@ -69,9 +69,6 @@ class LoginManager(SessionManager):
     @login_ext.route('/oauth2callback')
     def oauth2callback():
         provider = session.get('provider')
-        # api_key_file = '/client_secrets.json'
-        # access_url = 'https://www.googleapis.com/oauth2/v1/tokeninfo?'
-        # userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
         if provider == 'google':
             api_key_file = '/client_secrets.json'
             # set up the root Oauth token request URL for google
@@ -80,8 +77,6 @@ class LoginManager(SessionManager):
             userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
         elif provider == 'facebook':
             api_key_file = '/fb_client_secrets.json'
-            access_url = 'https://graph.facebook.com/oauth/access_token?'
-            access_url += 'grant_type=fb_exchange_token'
             userinfo_url = 'https://graph.facebook.com/v2.8/me'
 
         # Start OAuth2 flow to receive credentals
@@ -175,6 +170,8 @@ class LoginManager(SessionManager):
                 return redirect('/')
 
         if provider == 'facebook':
+            # use the first step from google's Oauth2client
+            # tool to get the facebook login redirect page
             try:
                 flow = flow_from_clientsecrets(
                         INSTANCE_DIR + api_key_file,
@@ -193,6 +190,11 @@ class LoginManager(SessionManager):
             fb_redirect_url = helpers.get_api_key('fb_client_id', 'web', 'redirect_uris')[0]
             fb_client_secret = helpers.get_api_key('fb_client_id', 'web', 'client_secret')
 
+            # request.args will be empty the first pass through,
+            # so again use Google's Oauth2client to get the
+            # authorize url and receive an access code
+            # that will be stored in request.args and needed
+            # later to retrieve user info.
             if 'code' not in request.args:
                 # getting the auth uri will generate a 'code'
                 # key:value in the request object
@@ -206,17 +208,12 @@ class LoginManager(SessionManager):
                 # a FB Graph API endpoint
                 auth_code = request.args.get('code')
 
-                h = httplib2.Http()
-
-                fb_redirect_url = url_for('login_ext.oauth2callback', _external=True)
-
-                payload = {'client_id': fb_app_id, 'redirect_uri': fb_redirect_url, 'client_secret': fb_client_secret, 'code': auth_code, 'scope': 'public_profile, email'}
+                # create object with request parameters
+                payload = {'client_id': fb_app_id, 'redirect_uri': fb_redirect_url, 'client_secret': fb_client_secret, 'code': auth_code}
                 base_url = 'https://graph.facebook.com/v2.8/oauth/access_token'
 
+                # send the auth_code in exchange for an access token
                 result = requests.get(base_url, payload).json()
-                print ''
-                print 'result= ', result
-                print ''
 
                 # If there was an error in the access token info, abort.
                 if result.get('error') is not None:
@@ -232,170 +229,75 @@ class LoginManager(SessionManager):
                 input_token = helpers.get_api_key('fb_client_id', 'web', 'app_token')
                 access_token = result['access_token']
                 # store the access token in order to log out
-                payload2 = {'input_token': input_token, 'access_token': access_token}
-                # the access token is
-                r2 = requests.get(inspect_token_url, payload2).json()
-                data = r2.get('data')
+                req_params = {'input_token': input_token, 'access_token': access_token}
 
-                session['credentials'] = r2.get('data')
+                # the access token is used to get user info.
+                inspected_token = requests.get(inspect_token_url, req_params).json()
+                inspection_data = inspected_token.get('data')
+                session['credentials'] = inspection_data
 
                 # If there was an error in the access token info, abort.
-                if r2.get('error') is not None:
+                if inspected_token.get('error') is not None:
                     print 'flowexchangeerror'
                     response = make_response(
                         json.dumps(
                             'There was an error in the access token info.'), 401)
                     return response
 
-                # Verify that the access token is used for the intended user.
-                #provider_id = data.get('user_id')
-
-                #print 'am i getting a provider id?', provider_id
-                # if provider_id != credentials.id_token['sub']:
-                #     response = make_response(
-                #         json.dumps(
-                #             "Token's user ID doesn't match given user ID."), 401)
-                #     return response
-
                 # Verify that the access token is valid for this app.
-                if data.get('app_id') != fb_app_id:
+                if inspection_data.get('app_id') != fb_app_id:
                     response = make_response(
                         json.dumps("Token's client ID does not match app's."), 401)
                     return response
 
+                # Verify that the token hasn't expired
+                # If it has, redirect to logout.
+                # This should only be triggered for existing users.
+                # If its expired, then the session will clear and
+                # the user will go through the login again.
+                if inspection_data.get('is_valid') != True:
+                    response = make_response(
+                        json.dumps("Token is expired.  Try logging in again."), 401)
+                    return redirect(url_for('login_ext.logout'))
+
+                # Make request to FB Graph API for USER INFO
+                params = {'access_token': access_token, 'fields': 'id,name,picture,email'}
+                user_info = requests.get(userinfo_url, params=params).json()
+
+                # Check if this user is already logged in.
+                provider_id = user_info.get('id')
                 stored_token = session.get('access_token')
                 stored_provider_id = session.get('provider_id')
-
-                # Get user info
-                params = {'access_token': access_token, 'alt': 'json'}
-                answer = requests.get(userinfo_url, params=params).json()
-
-                provider_id = answer.get('id')
-
                 if stored_token is not None and provider_id == stored_provider_id:
                     print 'keys in session: '
                     for key in session:
-                        print key, ' ', session[key]
-
+                        print key, ' - ', session[key]
                     print ""
                     response = make_response(
                         json.dumps("Current user is already connected."), 200)
                     return response
 
-                print 'do i get an answer??????????  = ', answer
-
                 # Store the access token in the session for later use.
                 session['access_token'] = access_token
                 session['provider_id'] = provider_id
-                print 'session provider id = ', session['provider_id']
 
+                # store the email in the session for checking current
+                # user when navigating the app
+                session['email'] = user_info['email']
 
-                # store the current user by setting the session variable for email
-                answer['email'] = 'fake@fakeemail.com'#answer['email']
-                session['email'] = 'fake@fakeemail.com'#answer['email']
-                answer['provider'] = provider
-                answer['provider_id'] = provider_id
-
-                # store the url for the user's profile photo
-                get_pic_url = 'https://graph.facebook.com/%s' % provider_id
-                pic_params = {'fields': 'picture', 'access_token': access_token}
-                get_picture = requests.get(get_pic_url, params=pic_params).json()
-
-                print 'picture url = ', get_picture
-                answer['picture'] = get_picture.get('picture').get('data').get('url')
-
-                print 'answer[picture]', answer['picture']
-                # print data
+                # add parameters to the user_info object
+                # for adding new User to the db
+                user_info['provider'] = provider
+                user_info['provider_id'] = provider_id
+                user_info['picture'] = user_info.get('picture').get('data').get('url')
 
                 # Check if user already exists
-                if helpers.check_if_user_exists(answer.get('email')) is not None:
+                if helpers.check_if_user_exists(user_info.get('email')) is not None:
                     return redirect('/')
-
-                # add the new user to the database
-                new_user = helpers.create_new_user(answer)
-                return redirect('/')
-
-    # Facebook Oauth2 login flow
-    # @login_ext.route('/fbconnect', methods=['GET', 'POST'])
-    # def fbconnect():
-    #     if request.method == 'GET':
-    #         return request
-
-    #     if request.method == 'POST':
-    #         # request.params['state']
-    #         # flask uses request.args.get('...')
-    #         if request.args.get('state', '') != session['state']:
-    #             error(401)
-    #         # retrieve the access token from ajax request body.
-    #         # this comes from the javascript in login.html
-    #         access_token = request.data
-    #         print "access token received %s " % access_token
-
-    #         app_id = json.loads(
-    #             open(INSTANCE_DIR + '/fb_client_secrets.json', 'r')
-    #             .read())['web']['app_id']
-    #         app_secret = json.loads(
-    #             open(INSTANCE_DIR + '/fb_client_secrets.json', 'r')
-    #             .read())['web']['app_secret']
-    #         url = 'https://graph.facebook.com/oauth/access_token?'
-    #         url += 'grant_type=fb_exchange_token&'
-    #         url += 'client_id=%s&client_secret=%s&fb_exchange_token=%s' % (
-    #             app_id, app_secret, access_token)
-    #         h = httplib2.Http()
-    #         result = h.request(url, 'GET')[1]
-
-    #         # Use token to get user info from API
-    #         userinfo_url = "https://graph.facebook.com/v2.4/me"
-    #         # strip expire tag from access token
-    #         token = result.split("&")[0]
-
-    #         url = 'https://graph.facebook.com/v2.4/'
-    #         url += 'me?%s&fields=name,id,email' % token
-    #         h = httplib2.Http()
-    #         result = h.request(url, 'GET')[1]
-    #         print "url sent for API access:%s"% url
-    #         print "API JSON result: %s" % result
-    #         data = json.loads(result)
-
-    #         session['email'] = data["email"]
-    #         session['provider'] = 'facebook'
-    #         session['username'] = data["name"]
-    #         session['provider_id'] = data["id"]
-
-    #         # The token must be stored in the login_session in order to properly
-    #         # logout, let's strip out the information before
-    #         # the equals sign in our token
-    #         stored_token = token.split("=")[1]
-    #         session['access_token'] = stored_token
-
-    #         # Get user picture
-    #         url = 'https://graph.facebook.com/v2.4/me/'
-    #         url += 'picture?%s&redirect=0&height=200&width=200' % token
-    #         h = httplib2.Http()
-    #         result = h.request(url, 'GET')[1]
-    #         data = json.loads(result)
-
-    #         session['picture'] = data["data"]["url"]
-    #         # self.session['user_ID'] == user.ID
-    #         # print "self.session['user_ID']: %s" % self.session['user_ID']
-
-    #         # Check if user already exists
-    #         check_user = helpers.get_current_user()
-    #         if check_user is not None:
-    #             return redirect('/')
-
-    #         new_user = helpers.create_new_user(session)
-    #         output = ''
-    #         output += '<h1>Welcome, '
-    #         output += session['username']
-
-    #         output += '!</h1>'
-    #         output += '<img src="'
-    #         output += session['picture']
-    #         output += ' " class="welcome-picture">'
-    #         print 'Done!'
-    #         return output
-
+                else:
+                    # add the new user to the database
+                    new_user = helpers.create_new_user(user_info)
+                    return redirect('/')
 
     # DISCONNECT - Revoke a current user's token and reset their login_session
     def GDisconnect(self):
