@@ -47,6 +47,11 @@ class MainAppManager(SessionManager):
         flickr_key = helpers.get_api_key('flickr', 'flickr', 'api_key')
         return jsonify(result=flickr_key)
 
+    # Sample HTTP error handling
+    @main_app.errorhandler(404)
+    def not_found(error):
+        return render_template(url_for('templates', filename='404.html'), 404)
+
     # # display only the current user's items
     # @app.route('/users/<int:user_id>/')
     # def my_items(user_id):

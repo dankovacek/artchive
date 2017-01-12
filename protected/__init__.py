@@ -68,8 +68,3 @@ def install_secret_key(app, filename='secret_key'):
 
 if not app.config['DEBUG']:
     install_secret_key(app)
-
-# Sample HTTP error handling
-@app.errorhandler(404)
-def not_found(error):
-    return render_template('404.html'), 404

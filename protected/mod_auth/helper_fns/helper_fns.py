@@ -56,6 +56,12 @@ class helperManager(SessionManager):
         elif service == 'secret_key':
             return self.get_key(INSTANCE_DIR + '/client_secrets.json',
                                 api_type, descriptor)
+        elif service == 'fb_client_id':
+            return self.get_key(INSTANCE_DIR + '/fb_client_secrets.json',
+                                api_type, descriptor)
+        elif service == 'fb_secret_key':
+            return self.get_key(INSTANCE_DIR + '/fb_client_secrets.json',
+                                api_type, descriptor)
 
     def get_current_user(self):
         """Retrieves the current user by email stored in the session variable address and returns user object"""

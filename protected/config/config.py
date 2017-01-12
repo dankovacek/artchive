@@ -27,9 +27,9 @@ CSRF_ENABLED = True
 
 # Use a secure, unique and absolutely secret key for
 # signing the data.
-CSRF_SESSION_KEY = "secret"
+CSRF_SESSION_KEY = "secret12342364524563451345634724563687fsgsy5njnbagakhadkfgjhlajldfhjslhkjljkahhnnbnurahgnvbndhgjsdtyjdhjkhfghtyjukopoiuhgfjnfjymvcnxdfasfwdytifogplfgkhjxfgnxlbkfnlskglhsdfgsfhgdftdfghsg"
 
 SESSION_COOKIE_PATH = os.path.join(BASE_DIR, 'session_cookie')
 
 # API Keys for Google Maps
-GOOGLEMAPS_KEY = ""
+#GOOGLEMAPS_KEY = ""
