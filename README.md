@@ -34,15 +34,15 @@ models are called, and where the views are executed.</li>
 ## 2.0 Background and Inspiration
 Photographing street art has been an interest of mine for years.  I have photos from Europe, West Africa, and across North, Central, and South America.
 
-My favourite project of the Udacity Frontend Nanodegree was the "Neighbourhood Map" Project.  I decided I wanted to make a tool for myself to create my own street art walking tour anywhere I went.  My project reviewers gave excellent feedback and it was cool to see screen captures of how my UI looked in Riga, Latvia, and in Brooklyn, NY.
+While still working full time as a mechanical engineer, I completed a Frontend web development program through Udacity.com. My favourite project in the program was the "Neighbourhood Map" Project, where I made a tool for myself to create my own street art walking tour wherever I went.  My project reviewers gave excellent feedback and it was cool to see screen captures of how my UI looked in Riga, Latvia, and in Brooklyn, NY.
 
 I integrated the Flickr and Google Maps APIs to populate a local map view of where street art could be seen.  Photos were all posted publicly by Flickr users.
 
-When I finally got around to figuring out the backend and putting my app live on the web, I tried walking around and visiting some of the street art.  One afternoon I toured around my neighbourhood, downtown Vancouver, and was amazed to discover that not a single piece still existed.  Some were painted over, some were removed entirely, and many were on walls that no longer existed, or had been obscured by new construction.  The pieces I was most familiar with from my walks around town were no longer there.  Beautiful, building-scale murals depicting traditional First Nation styles were no longer a part of the visual fabric of the city.
+After quitting my job and taking on programming studies full-time, I finally got around to figuring out the backend and putting my app live on the web.  I tried walking around and visiting some of the street art my app pulled in.  The first time I toured around my neighbourhood, downtown Vancouver, I was amazed to be unable to find a single piece that still existed.  Some were painted over, some were removed entirely, and many were on walls that no longer existed, or had been obscured by new construction.  The pieces I was most familiar with from my walks around town were no longer there.  Beautiful, building-scale murals depicting traditional First Nation styles were no longer a part of the visual fabric of the city.
 
-Street art is meant to be ephemeral, but art is an important way to describe a time and place, and a unique perspective and voice speaking to urban life.
+Street art is meant to be ephemeral, but art is an important way to describe a time and place, and a unique perspective and voice speaking about urban life.
 
-The Artchive Project is intended to capture the stories about city life told by locals for the purpose of pure creative expression or protest, with a chronological basis to capture the development and decay of cities.
+The Artchive Project is intended to capture the stories about city life told by locals for the purpose of pure creative expression or protest.  It creates a timeline for the story of urban transformation.
 
 ### 2.1 Pictograph
 
