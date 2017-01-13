@@ -32,6 +32,17 @@ models are called, and where the views are executed.</li>
 
 
 ## 2.0 Background and Inspiration
+Photographing street art has been an interest of mine for years.  I have photos from Europe, West Africa, and across North, Central, and South America.
+
+My favourite project of the Udacity Frontend Nanodegree was the "Neighbourhood Map" Project.  I decided I wanted to make a tool for myself to create my own street art walking tour anywhere I went.  My project reviewers gave excellent feedback and it was cool to see screen captures of how my UI looked in Riga, Latvia, and in Brooklyn, NY.
+
+I integrated the Flickr and Google Maps APIs to populate a local map view of where street art could be seen.  Photos were all posted publicly by Flickr users.
+
+When I finally got around to figuring out the backend and putting my app live on the web, I tried walking around and visiting some of the street art.  One afternoon I toured around my neighbourhood, downtown Vancouver, and was amazed to discover that not a single piece still existed.  Some were painted over, some were removed entirely, and many were on walls that no longer existed, or had been obscured by new construction.  The pieces I was most familiar with from my walks around town were no longer there.  Beautiful, building-scale murals depicting traditional First Nation styles were no longer a part of the visual fabric of the city.
+
+Street art is meant to be ephemeral, but art is an important way to describe a time and place, and a unique perspective and voice speaking to urban life.
+
+The Artchive Project is intended to capture the stories about city life told by locals for the purpose of pure creative expression or protest, with a chronological basis to capture the development and decay of cities.
 
 ### 2.1 Pictograph
 
@@ -60,7 +71,7 @@ From vandalism to high art, urbanization, globalization, mass migration, conflic
 
 ## 3.0 Executive Summary
 
-Project Graffiki is archiving tool for documenting street art of various forms.  It's also a tool to study the diversity of artistic styles in local and regional contexts, a means of tracking the evolution of artistic styles over time, a system of documentation for modern uses of symbology (protest, artistic expression, contemporary urban life).
+The Artchive Project is archiving tool for documenting street art of various forms.  It's also a tool to study the diversity of artistic styles in local and regional contexts, a means of tracking the evolution of artistic styles over time, a system of documentation for modern uses of symbology (protest, artistic expression, contemporary urban life).
 
 ## 4.0 UI/UX, Not Yet Organized Thoughts
 
@@ -81,25 +92,34 @@ volume of street art documented by users of Flickr.
 <img src="/public/graffikiapp/static/images/UIlandscape.jpg"><img src="/public/graffikiapp/static/images/UImobileprofile.jpg">
 
 </div>
-## Feature "Wish List"
+## Thoughts on UI, Database Design, Archiving Art
 
-**Secure Login**
-_Method_
-Use Oauth2 for authentication/authorization, also to help avoid
-spam issues, and to reduce work.
-
-_Authorization Request_
-The intent is to by default collect the minimum amount of personal information
-Collect e-mail address (as unique identifier for database)
+**Map View**
+Colour encoding map pins to convey time:
+* Pins should be colour coded to indicate the age of verification
+* 'red' means hasn't been verified in ~>1 year **or** unverified
+* 'orange' means hasn't been verified in ~>6 months
+* 'yellow' means hasn't been verified in ~>3 months
+* 'green' means verified 1 > and < 3 months
+* 'blue' means 'new', added < 1 month ago
 
 **User**
 A User database will track:
 * contributions of photography (flicks),
-* comments, i.e. information related to the piece, the artist, a movement, etc.
+* comments, i.e. information related to the piece, the artist,
+a movement, etc.
 * 'like' or verification (see Quality Assurance below)
 * **must not track** personal information
-* Following initial registration with Oauth process, users can voluntarily
-provide additional information
+* Following initial registration with Oauth process, users can
+voluntarily provide additional information and customize their
+own profile
+* can follow and be followed
+
+**Piece**
+A Piece is a single work of art,
+* track when photos were taken
+* track verifications of location
+* track status of piece, i.e. unaltered from most current photo
 
 **Archiving**
 Quality standards should be applied to the documentation of a work.  For example:
@@ -115,10 +135,12 @@ skew the original intent of the artist.  More research is required on maintainin
 the integrity of the work in its environment.
 
 _Quality Assurance_
-The 'quality assurance' aspect of photo documentation can employ a Reddit-style
-'rating'or 'approval' system.  By publishing carefully crafted quality standards,
-the PG community will self-filter the best images.  A Reddit-style points system
-can encourage participation, similar to the 'treasure hunt' spirit of the Geocaching
+The 'quality assurance' aspect of photo documentation can employ
+a Reddit-style 'rating'or 'approval' system.  By publishing
+carefully crafted quality standards,the PG community will self-
+filter the best images.  A Reddit-style points system
+can encourage participation, similar to the 'treasure hunt'
+spirit of the Geocaching
 community.
 
 **UI/UX**

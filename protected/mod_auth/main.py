@@ -39,12 +39,14 @@ class MainAppManager(SessionManager):
             return redirect('/login')
     #     #, items=items, user=currentUser)
 
+    @helpers.login_required
     @main_app.route('/flickr_key_query', methods=["GET"])
     def flickr_key_query():
         # Get Flickr API Key
         api_key = helpers.get_api_key('flickr', 'flickr', 'api_key')
         return jsonify(result=api_key)
 
+    @helpers.login_required
     @main_app.route('/geolocate_key_query', methods=["GET"])
     def geolocate_key_query():
         """Routing for Google Maps API key retrieval."""
