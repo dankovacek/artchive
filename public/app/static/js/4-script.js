@@ -72,23 +72,14 @@ var ViewModel = function() {
     // renders the svg logo on the landing page
     set_bg_image();
 
-    // // Initialize the Login Flow
-    // this.loginWindow = ko.observable(false);
-    // // toggle the login buttons
-    // var toggleLogin = function() {
-    //     switch (loginWindow()) {
-    //         case false:
-    //             loginWindow(true);
-    //             break;
-    //         case true:
-    //             loginWindow(false);
-    //     }
-    // };
-
     //initialize a photos object
     this.photoList = ko.observableArray();
     this.currentPlace = ko.observable();
     this.currentListItem = ko.observable();
+
+    // store the most recent measurement of location
+    // accuracy.
+    this.locAccuracy = ko.observable();
 
     //array for photo markers
     this.photoMarkerList = ko.observableArray();
@@ -113,19 +104,6 @@ var ViewModel = function() {
 
     // upon request, get a user's current location
     var google_geolocate = "https://www.googleapis.com/geolocation/v1/geolocate";
-
-    // this.getCurrentLocation();
-    this.trigger_init_geolocate = function() {
-        $.getJSON('/geolocate_key_query', {})
-        .done(function(data) {
-            // Send the api_key to the geolocation api request function
-            // to avoid problems with asynchronous ajax requests
-            self.getInitialGeoLocation(data.result);
-        })
-        .fail(function() {
-            alert("Failed to retrieve API Key.  Richard, what'dja do??");
-        });
-    };
 
     // In chrome you can now do this
     navigator.permissions.query({name: 'geolocation'}).then(function(PermissionStatus){
@@ -169,10 +147,9 @@ var ViewModel = function() {
             };
 
             var setLoc = function(loc) {
-                console.log(loc, ' <--- initial loc');
                 var initLoc = { lat: loc.coords.latitude, lng: loc.coords.longitude};
                 self.initializeMap(initLoc);
-                console.log(initLoc, ' <--- initial loc');
+                self.locAccuracy(loc.coords.accuracy);
             };
 
             var locSuccess = function(pos) {

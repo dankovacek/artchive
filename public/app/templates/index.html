@@ -10,7 +10,7 @@
             <svg id="splashLogo"></svg>
         </div>
         <div class="geoPermission">
-            <button class="useMyLocation" data-bind="click: trigger_init_geolocate">USE CURRENT LOCATION</button>
+            <button class="useMyLocation" data-bind="click: $root.getInitialGeoLocation">USE CURRENT LOCATION</button>
             <div class="setLocation">
                 <input id="setLocation" data-bind="value: $root.newPlace" placeholder="OR SET LOCATION">
                 <span data-bind="click: $root.changePlace" id="setLocationBtn">
@@ -39,7 +39,7 @@
             <span class="sidebar-name">{{ user.name }}</span>
             <a href="{{ url_for('login_ext.logout') }}" class="sidebar-logout">LOGOUT</a>
             {% else %}
-            <p style="color: #fff;">Guest</p>
+            <span class="sidebar-name">Guest</p>
             {% endif %}
             <div class="filterWindow" data-bind="visible: $root.showDistance">
                 <select id="distSelect" data-bind="options: availableRange,
@@ -89,6 +89,13 @@
         http://stackoverflow.com/questions/24391390/highlight-table-row-using-knockout-js
         -->
         <section data-bind="visible: photoList">
+            <div class="toolbar">
+                <span class="toolbar-accuracy" data-bind="click: $root.getInitialGeoLocation">
+                    <i class="fa fa-bullseye"></i>
+                </span>
+                <div class="location-accuracy" data-bind="text: locAccuracy"></div>
+                <span class="units">m</span>
+            </div>
             <div data-bind="foreach: photoList" class="thumbGallery">
                 <div data-bind="visible: $data.visible">
                     <div class="thumbContainer" data-bind="click: $parent.highlightedRowIndex.bind(null, $index)">

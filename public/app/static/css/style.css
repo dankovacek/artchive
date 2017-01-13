@@ -8,6 +8,11 @@ body {
     line-height: 24px;
 }
 
+.location-accuracy {
+  display: inline-block;
+  padding: 10px 5px 0 0;
+}
+
 #map {
     width: 100vw;
     height: 40vh;
@@ -22,6 +27,23 @@ section {
   position: relative;
   top: 40vh;
   z-index: 10;
+}
+
+.toolbar {
+  position: relative;
+  width: 100vw;
+  height: 10vh;
+  color: #000;
+  font-size: 1.5em;
+}
+
+.toolbar-accuracy {
+  display: inline-block;
+  padding: 5px;
+}
+
+.units {
+
 }
 
 /* END Main Page Styles */
