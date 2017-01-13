@@ -20,13 +20,17 @@ body {
 
 main {
   position: fixed;
-  z-index: 11;
+  z-index: 10;
+}
+
+.noResultsMsg {
+  text-align: center;
 }
 
 section {
   position: relative;
   top: 40vh;
-  z-index: 10;
+  z-index: 9;
 }
 
 .toolbar {
@@ -99,7 +103,7 @@ input {
     width: 100vw;
     height: 100vh;
     background: #fff;
-    z-index: 12;
+    z-index: 14;
 }
 
 a#login-btn {
@@ -165,14 +169,13 @@ a#login-btn {
   transition: all 600ms ease;
 }
 .Offscreen.is-Open {
-    transform: translate3d(0, 0, 0);
-    z-index: 13;
+  transform: translate3d(0, 0, 0);
+  z-index: 13;
 }
 .Button {
     position: absolute;
     left: -70px;
-    top: 0.0em;
-    background-color: rgba(0,0,0,0.2);
+    top: 40vh;
     width: 55px;
     height: 50px;
     padding: 0.5em;

@@ -159,7 +159,9 @@ var ViewModel = function() {
             };
 
             var showError = function(err) {
-                console.log('ERROR' + err.code + ': ' + err.message);
+                console.log(err);
+                console.log('');
+                console.log('ERROR: ' + err.code + ' - ' + err.message);
             };
 
             var getLoc = function() {
@@ -192,8 +194,7 @@ var ViewModel = function() {
             map.setCenter(initialLocation);
         } else {
             map.setCenter(initialLocation);
-            //self.currentPlace(initialLocation);
-            self.createPlaceMarker(initialLocation);
+            self.placeMarkerAndPanTo(initialLocation);
         }
 
         google.maps.event.addListenerOnce(map, 'tilesloaded', self.initializeLocation);
@@ -204,13 +205,16 @@ var ViewModel = function() {
         self.setPlace();
     };
 
-    this.placeMarkerAndPanTo = function(latLng, map) {
+    this.placeMarkerAndPanTo = function(latLng) {
+        var name = "You are within " + self.locAccuracy();
+        name += ' m of this location';
         //not sure I want a marker in this instance
         var marker = new google.maps.Marker({
+            name: name,
             position: latLng,
             animation: google.maps.Animation.DROP,
             icon: 'static/images/icons/locMarker.svg',
-            map: map,
+            map: self.map,
             zoom: 10
         });
 
@@ -218,37 +222,6 @@ var ViewModel = function() {
         //add new marker to locationMarkerList
         self.locationMarkerList.push(marker);
         self.setPlace();
-    };
-
-    /*
-    createPlaceMarker(placeData) reads Google Places search results to create map pins.
-    placeData is the object returned from search results containing information
-    about a single location.
-    */
-    this.createPlaceMarker = function(locLiteral) {
-        //var place = new google.maps.PlacesService();
-        var name = "You might be here.";
-        //var map = self.map;
-
-        //get the boungs of the current view
-        var bounds = map.getBounds();
-
-        // marker is an object with additional data about the pin for a single location
-        var marker = new google.maps.Marker({
-            map: self.map,
-            // free open source svg graphics from http://uxrepo.com/
-            icon: 'static/images/icons/locMarker.svg',
-            position: locLiteral,
-            animation: google.maps.Animation.DROP,
-            title: name
-        });
-
-        self.locationMarkerList.push(marker);
-
-        // fit the map to the new marker
-        map.fitBounds(bounds);
-        // center the map
-        map.setCenter(bounds.getCenter());
     };
 
     this.getWindowContent = function(photo) {
@@ -501,7 +474,7 @@ var ViewModel = function() {
     /* Callback(results, status) makes sure the search returned results for a location. If so, it creates a new map marker for that location.*/
     this.callback = function(results, status) {
         if (status == google.maps.places.PlacesServiceStatus.OK) {
-            self.createPlaceMarker(results[0]);
+            self.placeMarkerAndPanTo(results[0]);
         }
     };
 
@@ -925,10 +898,6 @@ var ViewModel = function() {
             if (status === google.maps.GeocoderStatus.OK) {
                 map.setCenter(results[0].geometry.location);
                 self.setPlace();
-                // var marker = new google.maps.Marker({
-                //     map: map,
-                //     position: results[0].geometry.location
-                //     });
             } else {
             alert('Geolocate was not successful for the following reason: ' + status);
             }
@@ -965,7 +934,7 @@ var ViewModel = function() {
         self.userObjectInitialized(false);
 
         //then set a new pin and update currentPlace
-        self.placeMarkerAndPanTo(e.latLng, map);
+        self.placeMarkerAndPanTo(e.latLng);
 
         //and reapply the distance filter
         // var maxDistance = self.setSearchDist(self.selectedRadius());

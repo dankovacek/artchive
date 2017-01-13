@@ -90,8 +90,8 @@
         -->
         <section data-bind="visible: photoList">
             <div class="toolbar">
-                <span class="toolbar-accuracy" data-bind="click: $root.getInitialGeoLocation">
-                    <i class="fa fa-bullseye"></i>
+                <span class="toolbar-accuracy">
+                    <i class="fa fa-bullseye" data-bind="click: $root.getInitialGeoLocation"></i>
                 </span>
                 <div class="location-accuracy" data-bind="text: locAccuracy"></div>
                 <span class="units">m</span>
