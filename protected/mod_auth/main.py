@@ -36,16 +36,20 @@ class MainAppManager(SessionManager):
             #state = None
             return render_template('index.html', user=currentUser)
         else:
-            print 'no current user'
             return redirect('/login')
     #     #, items=items, user=currentUser)
 
-    @main_app.route('/api_key_query')
-    def key_query():
-        """Routing for Google Maps API key retrieval."""
+    @main_app.route('/flickr_key_query', methods=["GET"])
+    def flickr_key_query():
         # Get Flickr API Key
-        flickr_key = helpers.get_api_key('flickr', 'flickr', 'api_key')
-        return jsonify(result=flickr_key)
+        api_key = helpers.get_api_key('flickr', 'flickr', 'api_key')
+        return jsonify(result=api_key)
+
+    @main_app.route('/geolocate_key_query', methods=["GET"])
+    def geolocate_key_query():
+        """Routing for Google Maps API key retrieval."""
+        api_key = helpers.get_api_key('places_search', 'maps', 'api_key')
+        return jsonify(result=api_key)
 
     # Sample HTTP error handling
     @main_app.errorhandler(404)

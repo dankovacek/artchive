@@ -72,18 +72,18 @@ var ViewModel = function() {
     // renders the svg logo on the landing page
     set_bg_image();
 
-    // Initialize the Login Flow
-    this.loginWindow = ko.observable(false);
-    // toggle the login buttons
-    var toggleLogin = function() {
-        switch (loginWindow()) {
-            case false:
-                loginWindow(true);
-                break;
-            case true:
-                loginWindow(false);
-        }
-    };
+    // // Initialize the Login Flow
+    // this.loginWindow = ko.observable(false);
+    // // toggle the login buttons
+    // var toggleLogin = function() {
+    //     switch (loginWindow()) {
+    //         case false:
+    //             loginWindow(true);
+    //             break;
+    //         case true:
+    //             loginWindow(false);
+    //     }
+    // };
 
     //initialize a photos object
     this.photoList = ko.observableArray();
@@ -112,23 +112,92 @@ var ViewModel = function() {
     var map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
     // upon request, get a user's current location
-    var freegeoip = "http://freegeoip.net/json/";
-
-    this.getInitialGeoLocation = function() {
-        var thisLoc = $.getJSON(freegeoip, {})
-            .done(function(data) {
-                console.log(data.latitude, data.longitude);
-                var initialLoc = { lat: data.latitude, lng: data.longitude};
-                self.initializeMap(initialLoc);
-            })
-            .fail(function() {
-                alert("The geolocation request has failed.");
-                self.initializeMap("Error Flag");
-            });
-    };
-    var initialLoc = ko.observable();
+    var google_geolocate = "https://www.googleapis.com/geolocation/v1/geolocate";
 
     // this.getCurrentLocation();
+    this.trigger_init_geolocate = function() {
+        $.getJSON('/geolocate_key_query', {})
+        .done(function(data) {
+            // Send the api_key to the geolocation api request function
+            // to avoid problems with asynchronous ajax requests
+            self.getInitialGeoLocation(data.result);
+        })
+        .fail(function() {
+            alert("Failed to retrieve API Key.  Richard, what'dja do??");
+        });
+    };
+
+    // In chrome you can now do this
+    navigator.permissions.query({name: 'geolocation'}).then(function(PermissionStatus){
+        console.log(PermissionStatus.state); // prompt, granted, denied
+        // even listen for changes
+        PermissionStatus.onchange = function(){
+            console.log(this.state);
+        };
+    });
+
+    // initialization
+    if( sessionStorage.getItem("geo_access") === null ){
+        // just assume it is prompt
+        sessionStorage.setItem("geo_access", "prompt");
+    }
+
+    function ask(){
+        navigator.geolocation.getCurrentPosition(function(){
+            sessionStorage.setItem("geo_access", "granted");
+        }, function(err){
+            if(err.code == 1){ // PERMISSION_DENIED
+                sessionStorage.setItem("geo_access", "denied");
+            }
+            sessionStorage.setItem("geo_access", "prompt");
+        });
+    }
+
+    // Ask for geolocate permission
+    ask();
+
+    //this.initialLoc = ko.observableArray();
+
+    this.getInitialGeoLocation = function(geolocate_key) {
+
+        if (navigator.geolocation) {
+            // Set options for geolocation
+            var options = {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+            };
+
+            var setLoc = function(loc) {
+                console.log(loc, ' <--- initial loc');
+                var initLoc = { lat: loc.coords.latitude, lng: loc.coords.longitude};
+                self.initializeMap(initLoc);
+                console.log(initLoc, ' <--- initial loc');
+            };
+
+            var locSuccess = function(pos) {
+                // Set the location once we have a current
+                // position object.
+                setLoc(pos);
+            };
+
+            var showError = function(err) {
+                console.log('ERROR' + err.code + ': ' + err.message);
+            };
+
+            var getLoc = function() {
+                navigator.geolocation.getCurrentPosition(locSuccess, showError, options);
+            };
+
+            // Defer creation of the location object until the
+            // location object is retrieved.  Avoids error due to
+            // asynchronous behaviour of getCurrentPosition function.
+            getLoc();
+
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    };
 
     this.initializeMap = function(initialLocation) {
 
@@ -452,8 +521,7 @@ var ViewModel = function() {
         }, 700);
     };
 
-    /* Callback(results, status) makes sure the search returned results for a location.
-    If so, it creates a new map marker for that location.*/
+    /* Callback(results, status) makes sure the search returned results for a location. If so, it creates a new map marker for that location.*/
     this.callback = function(results, status) {
         if (status == google.maps.places.PlacesServiceStatus.OK) {
             self.createPlaceMarker(results[0]);
@@ -574,7 +642,8 @@ var ViewModel = function() {
     };
 
     this.get_flickr_api_key = function(bounds) {
-        $.getJSON('/api_key_query', {
+        $.getJSON('/flickr_key_query', {
+            service: 'flickr'
         })
         .done(function(data) {
             // Send the api_key to the flickr api request function
@@ -889,9 +958,6 @@ var ViewModel = function() {
         });
     };
 
-    //create a deferred object to defer triggering a function
-    this.deferred = $.Deferred();
-
     //listen for map interactions and update currentPlace
     map.addListener('dblclick', function(e) {
 
@@ -942,11 +1008,8 @@ var ViewModel = function() {
 //this will prevent a request happening before
 //the page can accept it.
 
-var LOC = '';
-
 $(window).load(function() {
 
-    //LOC = https://freegeoip.net/json/
     ko.applyBindings(new ViewModel());
 
     // START HELPER FUNCTiONS
@@ -973,9 +1036,3 @@ $(window).load(function() {
     });
 
 });
-
-
-// var googleFailure = function() {
-//     alert('Google Maps failed to load.');
-// };
-

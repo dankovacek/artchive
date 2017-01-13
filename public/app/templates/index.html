@@ -10,7 +10,7 @@
             <svg id="splashLogo"></svg>
         </div>
         <div class="geoPermission">
-            <button class="useMyLocation" data-bind="click: getInitialGeoLocation">USE CURRENT LOCATION</button>
+            <button class="useMyLocation" data-bind="click: trigger_init_geolocate">USE CURRENT LOCATION</button>
             <div class="setLocation">
                 <input id="setLocation" data-bind="value: $root.newPlace" placeholder="OR SET LOCATION">
                 <span data-bind="click: $root.changePlace" id="setLocationBtn">

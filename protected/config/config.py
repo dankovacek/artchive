@@ -2,6 +2,8 @@ import uuid
 import os
 import sys
 
+APPLICATION_ROOT = '/'
+
 # Statement for enabling the development environment
 # True for development, False for production
 DEBUG = True
