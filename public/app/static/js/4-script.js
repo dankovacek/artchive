@@ -48,6 +48,9 @@ var Photo = function(photo, location) {
     this.visible = ko.observable(true);
 };
 
+// This User refers to the Users associated
+// with retrieved Flickr photos, and is
+// not actually stored in the database.
 var User = function(person, allImageObjects) {
     //self = this;
     this.alias = person.path_alias;

@@ -1,4 +1,4 @@
-/* START Main page styles */
+/* START MAP page styles */
 body {
     margin: 0;
     background-color: #f7f7f7;
@@ -8,11 +8,6 @@ body {
     line-height: 24px;
 }
 
-.location-accuracy {
-  display: inline-block;
-  padding: 10px 5px 0 0;
-}
-
 #map {
     width: 100vw;
     height: 40vh;
@@ -20,7 +15,7 @@ body {
 
 main {
   position: fixed;
-  z-index: 10;
+  z-index: 20;
 }
 
 .noResultsMsg {
@@ -31,26 +26,54 @@ section {
   position: relative;
   top: 40vh;
   z-index: 9;
+  min-height: 60vh;
+  clear: both;
 }
+
+  /* START Toolbar on MAP page */
 
 .toolbar {
   position: relative;
   width: 100vw;
   height: 10vh;
-  color: #000;
+  color: rgb(0, 53, 125);
   font-size: 1.5em;
 }
 
-.toolbar-accuracy {
+
+.cl-20 {
   display: inline-block;
-  padding: 5px;
+  width: 20vw;
+  vertical-align: top;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+
+.target {
+  text-align: center;
+  height: 100%;
+}
+
+.location-accuracy {
+  display: inline;
+  font-size: 1.5em;
+  position: relative;
+  top: 5px;
+  color: #444;
 }
 
 .units {
-
+  display: block;
+  font-size: 0.5em;
+  width: 100%;
+  position: relative;
+  color: #000;
 }
 
-/* END Main Page Styles */
+  /* START Toolbar on MAP page */
+
+/* END MAP Page Styles */
 
 
 /* START Splash Page Styles */
@@ -103,7 +126,7 @@ input {
     width: 100vw;
     height: 100vh;
     background: #fff;
-    z-index: 14;
+    z-index: 25;
 }
 
 a#login-btn {
@@ -167,13 +190,14 @@ a#login-btn {
   width: 50%;
   transform: translate3d(100%, 0, 0);
   transition: all 600ms ease;
+  z-index: 30;
 }
 .Offscreen.is-Open {
   transform: translate3d(0, 0, 0);
-  z-index: 13;
+  z-index: 30;
 }
 .Button {
-    position: absolute;
+    position: fixed;
     left: -70px;
     top: 40vh;
     width: 55px;
@@ -183,41 +207,51 @@ a#login-btn {
     transition: inherit;
 }
 .Button:hover {
-  background: rgba(32, 170, 178, 0.5);
+  background: rgba(32, 170, 178, 0.75);
 }
 .Menu-Bar {
   display: block;
   margin-bottom: 0.5em;
-  left: 0.5em;
-  right: 0.5em;
   height: 0.5em;
   position: absolute;
   transition: all 200ms ease;
-  background: #555;
+  color: #00357d;
   transform-origin: 50% 50%;
 }
 .Menu-Bar.Menu-Top {
-  top: 0.5em;
+  top: 1.15em;
+  left: 0.75em;
+  width: 1.5em;
+  transform: rotate(-45deg);
 }
 .Menu-Bar.Menu-Middle {
-  top: 1.5em;
+  top: 1.55em;
+  left: 1.0em;
+  width: 2.5em;
 }
 .Menu-Bar.Menu-Bottom {
-  top: 2.5em;
+  top: 1.9em;
+  left: 0.75em;
+  width: 1.5em;
+  transform: rotate(45deg);
 }
 .Button:hover .Menu-Bar {
   background: #FFF;
 }
 .is-Open .Menu-Bar.Menu-Top {
   transform: rotate(45deg);
-  top: 1.5em;
+  top: 1.15em;
+  left: 1.25em;
+  width: 1.75em;
 }
 .is-Open .Menu-Bar.Menu-Middle {
   height: 0;
 }
 .is-Open .Menu-Bar.Menu-Bottom {
   transform: rotate(-45deg);
-  top: 1.5em;
+  top: 2.1em;
+  left: 1.25em;
+  width: 1.75em;
 }
 
 input.userFilter {
@@ -285,10 +319,6 @@ figure{
     color: #a00;
     background-color: rgba(255,255,255,0.3);
     font-size: 1.9em;
-}
-
-section {
-    min-height: 60vh;
 }
 
 .thumbGallery {

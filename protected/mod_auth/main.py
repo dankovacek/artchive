@@ -59,8 +59,8 @@ class MainAppManager(SessionManager):
         return render_template(url_for('templates', filename='404.html'), 404)
 
     # # display only the current user's items
-    # @app.route('/users/<int:user_id>/')
-    # def my_items(user_id):
+    # @app.route('/users/<int:user_id>/<name>')
+    # def my_items(user_id, username):
     #     try:
     #         items = helpers.get_all_user_items(user_id)
     #         return render_template('content.html',

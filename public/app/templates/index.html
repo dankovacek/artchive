@@ -90,12 +90,22 @@
         -->
         <section data-bind="visible: photoList">
             <div class="toolbar">
-                <span class="toolbar-accuracy">
-                    <i class="fa fa-bullseye" data-bind="click: $root.getInitialGeoLocation"></i>
-                </span>
-                <div class="location-accuracy" data-bind="text: locAccuracy"></div>
-                <span class="units">m</span>
+                <div class="cl-20">
+                    <span class="location-accuracy" data-bind="text: locAccuracy"></span>
+                    <span class="units">+/- metres</span>
+                </div>
+                <div class="target cl-20">
+                    <i class="fa fa-map-marker fa-2x" data-bind="click: $root.getInitialGeoLocation"></i>
+                </div>
+                <div class="tiled-thumb-switch cl-20">
+                    <i class="fa fa-th fa-2x" data-bind="click: $root.getInitialGeoLocation"></i>
+                </div>
+                <div class="list-thumb-switch cl-20">
+                    <i class="fa fa-list-ul fa-2x" data-bind="click: $root.getInitialGeoLocation"></i>
+                </div>
+
             </div>
+
             <div data-bind="foreach: photoList" class="thumbGallery">
                 <div data-bind="visible: $data.visible">
                     <div class="thumbContainer" data-bind="click: $parent.highlightedRowIndex.bind(null, $index)">
