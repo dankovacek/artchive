@@ -77,7 +77,9 @@ var ViewModel = function() {
 
     //initialize a photos object
     this.photoList = ko.observableArray();
-    this.currentPlace = ko.observable();
+    // takes a map bounds object
+    // this.currentPlace = ko.observable();
+    // corresponds to the image thumb object in the list
     this.currentListItem = ko.observable();
 
     // store the most recent measurement of location
@@ -105,9 +107,6 @@ var ViewModel = function() {
 
     var map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
-    // upon request, get a user's current location
-    var google_geolocate = "https://www.googleapis.com/geolocation/v1/geolocate";
-
     // In chrome you can now do this
     navigator.permissions.query({name: 'geolocation'}).then(function(PermissionStatus){
         console.log(PermissionStatus.state); // prompt, granted, denied
@@ -119,10 +118,10 @@ var ViewModel = function() {
 
     // initialization
     if( sessionStorage.getItem("geo_access") === null ){
-        // just assume it is prompt
+        // prompt for permission
         sessionStorage.setItem("geo_access", "prompt");
     }
-
+    //ask and store geolocation permission
     function ask(){
         navigator.geolocation.getCurrentPosition(function(){
             sessionStorage.setItem("geo_access", "granted");
@@ -137,9 +136,10 @@ var ViewModel = function() {
     // Ask for geolocate permission
     ask();
 
-    //this.initialLoc = ko.observableArray();
-
-    this.getInitialGeoLocation = function(geolocate_key) {
+    // this function is triggered by the "use current location" button
+    // on the main logged-in page
+    this.getInitialGeoLocation = function() {
+        console.log('here???');
 
         if (navigator.geolocation) {
             // Set options for geolocation
@@ -150,6 +150,9 @@ var ViewModel = function() {
             };
 
             var setLoc = function(loc) {
+                // if markers are on the page, remove to avoid duplication
+                self.clearLocMarkers();
+
                 var initLoc = { lat: loc.coords.latitude, lng: loc.coords.longitude};
                 self.initializeMap(initLoc);
                 self.locAccuracy(loc.coords.accuracy);
@@ -194,37 +197,33 @@ var ViewModel = function() {
             errorFlag = true;
             alert("Geolocation service failed.  Go directly to Pickle Crow, ON and tell us what's it like.");
             initialLocation = picklecrowON;
-            map.setCenter(initialLocation);
-        } else {
-            map.setCenter(initialLocation);
-            self.placeMarkerAndPanTo(initialLocation);
         }
-
-        google.maps.event.addListenerOnce(map, 'tilesloaded', self.initializeLocation);
-
-    };
-
-    this.initializeLocation = function() {
-        self.setPlace();
+        self.setPlace(initialLocation);
     };
 
     this.placeMarkerAndPanTo = function(latLng) {
         var name = "You are within " + self.locAccuracy();
         name += ' m of this location';
-        //not sure I want a marker in this instance
+        console.log('placemarkerandpanto latlng: ', latLng);
+
+        var icon = {
+            url: 'static/images/icons/compass.svg',
+            scaledSize: new google.maps.Size(33, 33),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(0, 0),
+        };
+
+        var positn = new google.maps.LatLng(latLng.lat, latLng.lng);
         var marker = new google.maps.Marker({
-            name: name,
-            position: latLng,
-            animation: google.maps.Animation.DROP,
-            icon: 'static/images/icons/locMarker.svg',
-            map: self.map,
-            zoom: 10
+            position: positn,
+            title: name,
+            map: map,
+            icon: icon
         });
 
         map.panTo(latLng);
         //add new marker to locationMarkerList
         self.locationMarkerList.push(marker);
-        self.setPlace();
     };
 
     this.getWindowContent = function(photo) {
@@ -298,17 +297,6 @@ var ViewModel = function() {
         var photo = self.getPhotoObjectById(photoObj.id);
 
         var windowTitle = self.getWindowContent(photo)[0];
-        //var infoWindowContent = self.getWindowContent(photo)[1];
-        // marker is an object with additional data about the pin for a single location
-        // var marker = new google.maps.Marker({
-        //     map: map,
-        //     // free open source svg graphics from http://uxrepo.com/
-        //     icon: '/images/icons/cameraMarker.svg',
-        //     position: new google.maps.LatLng(photoObj.latitude, photoObj.longitude),
-        //     title: windowTitle,
-        //     photoId: photoObj.id,
-        //     scaledSize: new google.maps.Size(36, 26)
-        // });
 
         var icon = {
             url: 'static/images/icons/cameraMarker.svg',
@@ -332,7 +320,9 @@ var ViewModel = function() {
         //listen for click, and animate marker and toggle info window
         google.maps.event.addListener(marker, 'click', function() {
             self.animateMarker(marker);
-            self.openInfoWindow(marker, photo);
+
+            //not sure we need the info window
+            //self.openInfoWindow(marker, photo);
 
             //bring back the image in list view if it was removed
             var visibility = photo.visible();
@@ -477,10 +467,9 @@ var ViewModel = function() {
     /* Callback(results, status) makes sure the search returned results for a location. If so, it creates a new map marker for that location.*/
     this.callback = function(results, status) {
         if (status == google.maps.places.PlacesServiceStatus.OK) {
-            self.placeMarkerAndPanTo(results[0]);
+            self.setPlace(results[0]);
         }
     };
-
 
     /*  pinPoster(locations) takes in the array of locations created by locationFinder()
     and fires off Google place searches for each location  */
@@ -550,14 +539,16 @@ var ViewModel = function() {
         });
     };
 
-    this.make_flickr_photo_request = function(flickr_key, bounds) {
+    this.make_flickr_photo_request = function(flickr_key) {
         // the flickr request string filters for photos with geoTag, by the
         // location stored in place.name, and by the keywords listed in the
         // tags array, default to "or"(any) of the tags instead of "and" (all)
 
         // search for images only in the current map view
         // required bounding box format is [min_lon, min_lat, max_lon, max_lat]
-        var searchBounds = bounds.b.b + ',' + bounds.f.f + ',' + bounds.b.f + ',' + bounds.f.b;
+        var currentBounds = map.getBounds();
+        var searchBounds = currentBounds.b.b + ',' + currentBounds.f.f + ',';
+        searchBounds += currentBounds.b.f + ',' + currentBounds.f.b;
         var searchTags = "graffiti";
         var flickr_base_uri = 'https://api.flickr.com/services/rest/?method=flickr.photos.search';
         $.getJSON(flickr_base_uri, {
@@ -594,14 +585,14 @@ var ViewModel = function() {
         });
     };
 
-    this.get_flickr_api_key = function(bounds) {
+    this.get_flickr_api_key = function() {
         $.getJSON('/flickr_key_query', {
             service: 'flickr'
         })
         .done(function(data) {
             // Send the api_key to the flickr api request function
             // to avoid problems with asynchronous ajax requests
-            self.make_flickr_photo_request(data.result, bounds);
+            self.make_flickr_photo_request(data.result);
             self.make_flickr_user_request(data.result);
         })
         .fail(function() {
@@ -609,20 +600,20 @@ var ViewModel = function() {
         });
     };
 
-    this.flickrData = function(bounds) {
+    this.flickrData = function() {
         // Retrieve the flickr api key from secure folder, then because
         // of asynchronous Ajax request, on successful retrieval, trigger
         // a second ajax request to the actual flickr API.
-        var flickr_key = self.get_flickr_api_key(bounds);
+        var flickr_key = self.get_flickr_api_key();
     };
 
     //setPlace gets called from page load and from a change in the
     //search range selector, and captures the current map viewport
     //for image searching purposes
-    this.setPlace = function() {
-        var bounds = map.getBounds();
-        self.currentPlace(bounds);
-        self.flickrData(bounds);
+    this.setPlace = function(location) {
+        map.setCenter(location);
+        self.placeMarkerAndPanTo(location);
+        self.flickrData();
     };
 
     //hightlight list item and set as current on click
@@ -727,9 +718,7 @@ var ViewModel = function() {
                 data.giveLove(1);
                 return data.giveLove();
         }
-
     };
-
 
     //this gets fired when the User filter is triggered,
     //and also when the list item close button is clicked
@@ -899,25 +888,31 @@ var ViewModel = function() {
 
         geocoder.geocode({'address': self.newPlace()}, function(results, status) {
             if (status === google.maps.GeocoderStatus.OK) {
-                map.setCenter(results[0].geometry.location);
-                self.setPlace();
+                var location = results[0].geometry.location;
+                self.setPlace(location);
             } else {
             alert('Geolocate was not successful for the following reason: ' + status);
             }
         });
     };
 
+    // listen for the map to be loaded, then call the initialize map function.
+    //var loadListener = map.addListener('tilesloaded', this.getInitialGeoLocation);
+    //google.maps.event.removeListener(loadListener);
     //listen for map interactions and update currentPlace
-    map.addListener('dblclick', function(e) {
+    map.addListener('click', function(e) {
+        placeMarkerAndPanTo1(e.latLng, map);
+    });
 
-        //first remove the existing location pin
-        var currentMarker = self.locationMarkerList()[0];
-
-        if (currentMarker) {
-            currentMarker.setMap(null);
-            self.locationMarkerList.remove(currentMarker);
+    this.clearLocMarkers = function() {
+        var markers = self.locationMarkerList();
+        if (markers.length > 1) {
+            markers[markers.length - 1].setMap(null);
+            self.locationMarkerList.pop();
         }
+    };
 
+    this.resetPhotoMarkersandUserList = function() {
         //clear all existing places and photo markers
         //from their respective tracking arrays
         var allPhotoMarkers = self.photoMarkerList();
@@ -928,28 +923,40 @@ var ViewModel = function() {
 
         //reset all variables
         self.photoMarkerList.removeAll();
-        self.locationMarkerList.removeAll();
         self.users.removeAll();
         self.userList = [];
         self.photoList.removeAll();
-        this.currentPlace = ko.observable();
-        this.currentListItem = ko.observable();
+        // self.currentPlace = ko.observable();
+        self.currentListItem = ko.observable();
         self.userObjectInitialized(false);
+    };
 
-        //then set a new pin and update currentPlace
-        self.placeMarkerAndPanTo(e.latLng);
+    function placeMarkerAndPanTo1(latLng) {
+        // first remove the current location marker
+        // but leave the 'home' compass marker
 
-        //and reapply the distance filter
-        // var maxDistance = self.setSearchDist(self.selectedRadius());
-        // self.selectedRadius(maxDistance);
-        // self.filterByDistance(maxDistance);
+        // Clear the location markers
+        self.clearLocMarkers();
 
-        //when place changes, close all infoWindows
-        self.closeInfoWindow();
+        // Reset Photo and User Objects
+        self.resetPhotoMarkersandUserList();
 
-    });
+        // Now create a new location marker.
+        var newMarker = new google.maps.Marker({
+            position: latLng,
+            map: map
+        });
 
-    // this.initializeMap();
+        // push the new marker to the locationmarkerlist
+        self.locationMarkerList.push(newMarker);
+
+        // pan to the new location
+        map.panTo(latLng);
+
+        // Now refresh the flickr search
+        self.flickrData();
+
+    }
 
 };
 

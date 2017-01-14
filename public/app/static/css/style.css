@@ -45,13 +45,12 @@ section {
   display: inline-block;
   width: 20vw;
   vertical-align: top;
-  text-align: center;
-  padding: 0;
+  text-align: left;
+  padding: 7px 0 0 0;
   margin: 0;
 }
 
 .target {
-  text-align: center;
   height: 100%;
 }
 
@@ -60,6 +59,7 @@ section {
   font-size: 1.5em;
   position: relative;
   top: 5px;
+  left: 20px;
   color: #444;
 }
 
@@ -68,6 +68,7 @@ section {
   font-size: 0.5em;
   width: 100%;
   position: relative;
+  left: 15px;
   color: #000;
 }
 
@@ -205,6 +206,7 @@ a#login-btn {
     padding: 0.5em;
     cursor: pointer;
     transition: inherit;
+    background: rgb(247, 247, 247);
 }
 .Button:hover {
   background: rgba(32, 170, 178, 0.75);
@@ -215,7 +217,7 @@ a#login-btn {
   height: 0.5em;
   position: absolute;
   transition: all 200ms ease;
-  color: #00357d;
+  background-color: #00357d;
   transform-origin: 50% 50%;
 }
 .Menu-Bar.Menu-Top {
@@ -324,6 +326,10 @@ figure{
 .thumbGallery {
     display: flex;
     flex-wrap: wrap;
+}
+
+.thumbContainer {
+
 }
 
 /* END Thumb Gallery Styles */
