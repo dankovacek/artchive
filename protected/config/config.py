@@ -6,7 +6,7 @@ APPLICATION_ROOT = '/'
 
 # Statement for enabling the development environment
 # True for development, False for production
-DEBUG = True
+DEBUG = False
 
 # Define the application directory
 BASE_DIR = os.path.dirname(os.path.dirname((os.path.abspath(__file__))))
