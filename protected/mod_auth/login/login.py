@@ -379,7 +379,6 @@ class loginHelpers(SessionManager):
             return redirect(url_for('login_ext.oauth2callback'))
         else:
             http_auth = credentials.authorize(httplib2.Http())
-            print 'http auth? = ', http_auth
             return redirect('/')
 
 # create an instance of loginHelpers class to access login helper functions
