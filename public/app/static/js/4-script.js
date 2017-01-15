@@ -139,7 +139,6 @@ var ViewModel = function() {
     // this function is triggered by the "use current location" button
     // on the main logged-in page
     this.getInitialGeoLocation = function() {
-        console.log('here???');
 
         if (navigator.geolocation) {
             // Set options for geolocation
@@ -204,7 +203,6 @@ var ViewModel = function() {
     this.placeMarkerAndPanTo = function(latLng) {
         var name = "You are within " + self.locAccuracy();
         name += ' m of this location';
-        console.log('placemarkerandpanto latlng: ', latLng);
 
         var icon = {
             url: 'static/images/icons/compass.svg',
@@ -642,8 +640,8 @@ var ViewModel = function() {
             case true:
                 e.showSelector(false);
         }
-
-        self.openInfoWindow(currentMarker, e);
+        // Don't bother with the infowindow now
+        //self.openInfoWindow(currentMarker, e);
     };
 
     //toggle the "information" section

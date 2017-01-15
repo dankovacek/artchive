@@ -40,6 +40,9 @@ section {
   font-size: 1.5em;
 }
 
+.location-thumb {
+
+}
 
 .cl-20 {
   display: inline-block;
@@ -168,13 +171,13 @@ a#login-btn {
 
 .sidebar-name {
   float: left;
-  margin-left: 1.5em;
+  margin-left: 0.25em;
   color: #fff;
 }
 
 .sidebar-logout {
   float: right;
-  margin-right: 1.5em;
+  margin-right: 0.25em;
   color: #fff;
 }
 
@@ -211,6 +214,7 @@ a#login-btn {
 .Button:hover {
   background: rgba(32, 170, 178, 0.75);
 }
+
 .Menu-Bar {
   display: block;
   margin-bottom: 0.5em;
@@ -220,6 +224,7 @@ a#login-btn {
   background-color: #00357d;
   transform-origin: 50% 50%;
 }
+
 .Menu-Bar.Menu-Top {
   top: 1.15em;
   left: 0.75em;
@@ -237,6 +242,7 @@ a#login-btn {
   width: 1.5em;
   transform: rotate(45deg);
 }
+
 .Button:hover .Menu-Bar {
   background: #FFF;
 }
@@ -246,6 +252,7 @@ a#login-btn {
   left: 1.25em;
   width: 1.75em;
 }
+
 .is-Open .Menu-Bar.Menu-Middle {
   height: 0;
 }
