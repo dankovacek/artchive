@@ -4,9 +4,9 @@ from sqlalchemy import Boolean, DateTime, Text
 from sqlalchemy import create_engine
 from sqlalchemy.orm import relationship, sessionmaker
 
-from protected.mod_auth.conxn_manager.conxn_manager import Base, engine
-from protected.mod_auth.conxn_manager.conxn_manager import dbSession
-from protected.mod_auth.conxn_manager.conxn_manager import SessionManager
+from mod_auth.conxn_manager.conxn_manager import Base, engine
+from mod_auth.conxn_manager.conxn_manager import dbSession
+from mod_auth.conxn_manager.conxn_manager import SessionManager
 
 # import os
 # import sys

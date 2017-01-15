@@ -5,9 +5,9 @@ from functools import wraps
 import sys
 import os
 
-from protected.mod_auth.models.models import User
-from protected.mod_auth.conxn_manager.conxn_manager import dbSession, Base
-from protected.mod_auth.conxn_manager.conxn_manager import SessionManager
+from mod_auth.models.models import User
+from mod_auth.conxn_manager.conxn_manager import dbSession, Base
+from mod_auth.conxn_manager.conxn_manager import SessionManager
 
 
 import random

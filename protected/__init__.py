@@ -33,7 +33,7 @@ app = Flask(__name__, template_folder=template_folder, static_folder=static_fold
 
 # Configurations
 # Point the path to the parent directory
-app.config.from_object('protected.config')
+app.config.from_object('config')
 #app.config.from_pyfile(os.path.join(instance_path, 'config/config.py'))
 
 # Register the Blueprint sub-components for main and login
