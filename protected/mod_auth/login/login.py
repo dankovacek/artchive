@@ -29,10 +29,15 @@ helpers = helperManager()
 
 # create the mod_auth blueprint that gets registered in
 # __init__.py
-static_folder = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'public/app/static')
+#static_folder = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'public/app/static')
+
+base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 # create a Blueprint for registering the login flow as a module
-login_ext = Blueprint('login_ext', __name__)
+template_folder = os.path.join(base_dir, 'public/app/templates/')
+login_ext = Blueprint('login_ext', __name__, template_folder=template_folder)
+
+#login_ext.config.from_pyfile(os.path.join(protected_path, 'config/config.py'))
 
 APPLICATION_NAME = "artchive"
 
@@ -46,12 +51,14 @@ class LoginManager(SessionManager):
     """Functions for handling login and logout."""
 
     @login_ext.route('/login', methods=['GET'])
-    def ShowLogin():
+    def Login():
         """Render login page if user session doesn't exist.
         Otherwise, redirect to the main page."""
+        #print('what is config? ', login_ext.config.get('TEMPLATE_DIR'))
         current_user = helpers.get_current_user()
         if current_user is None:
-            return render_template('login_ext.login.html')
+            print('where is template folder? = ', login_ext.template_folder)
+            return render_template('login.html')
         else:
             return redirect('/')
 

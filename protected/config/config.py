@@ -11,7 +11,7 @@ DEBUG = False
 # Define the application directory
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
 STATIC_DIR = os.path.join(BASE_DIR, 'public/app/static')
-TEMPLATE_DIR = os.path.join(BASE_DIR, 'public/app/templates')
+TEMPLATE_FOLDER = os.path.join(BASE_DIR, 'public/app/templates')
 INSTANCE_PATH = os.path.join(BASE_DIR, 'protected/')
 
 # Define the database - we are working with

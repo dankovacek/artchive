@@ -78,8 +78,8 @@ app = Flask(__name__)
 app.config.from_pyfile(os.path.join(instance_path, 'config/config.py'))
 
 # Register the Blueprint sub-components for main and login
-app.register_blueprint(login_ext, url_prefix='/login_ext/')#, template_folder=app.config.get('TEMPLATE_DIR'))
-#app.register_blueprint(main_app, template_folder=app.config.get('TEMPLATE_DIR'))
+app.register_blueprint(login_ext)#, template_folder=app.config.get('TEMPLATE_DIR'))
+app.register_blueprint(main_app)#, template_folder=app.config.get('TEMPLATE_DIR'))
 
 # Define the database object which is imported
 # by modules and controllers
@@ -111,44 +111,44 @@ if not app.config['DEBUG']:
     install_secret_key(app)
 
 
-class MainAppManager(SessionManager):
-    """ Main routing features for app. """
-    @main_app.route('/')
-    def index():
-        """Check if user is logged in.  If not, set state token
-        for login flow."""
-        currentUser = helpers.get_current_user()
-        if currentUser:
-            items = None #helpers.get_all_items()
-            #state = None
-            return render_template('index.html', user=currentUser)
-        else:
-            return redirect('/login')
-    #     #, items=items, user=currentUser)
+# class MainAppManager(SessionManager):
+#     """ Main routing features for app. """
+#     @main_app.route('/')
+#     def index():
+#         """Check if user is logged in.  If not, set state token
+#         for login flow."""
+#         currentUser = helpers.get_current_user()
+#         if currentUser:
+#             items = None #helpers.get_all_items()
+#             #state = None
+#             return render_template('index.html', user=currentUser)
+#         else:
+#             return redirect('/login')
+#     #     #, items=items, user=currentUser)
 
-    @helpers.login_required
-    @app.route('/flickr_key_query', methods=["GET"])
-    def flickr_key_query():
-        # Get Flickr API Key
-        api_key = helpers.get_api_key('flickr', 'flickr', 'api_key')
-        return jsonify(result=api_key)
+#     @helpers.login_required
+#     @main_app.route('/flickr_key_query', methods=["GET"])
+#     def flickr_key_query():
+#         # Get Flickr API Key
+#         api_key = helpers.get_api_key('flickr', 'flickr', 'api_key')
+#         return jsonify(result=api_key)
 
-    @helpers.login_required
-    @app.route('/geolocate_key_query', methods=["GET"])
-    def geolocate_key_query():
-        """Routing for Google Maps API key retrieval."""
-        api_key = helpers.get_api_key('places_search', 'maps', 'api_key')
-        return jsonify(result=api_key)
+#     @helpers.login_required
+#     @main_app.route('/geolocate_key_query', methods=["GET"])
+#     def geolocate_key_query():
+#         """Routing for Google Maps API key retrieval."""
+#         api_key = helpers.get_api_key('places_search', 'maps', 'api_key')
+#         return jsonify(result=api_key)
 
-    # Sample HTTP error handling
-    @app.errorhandler(404)
-    def not_found(error):
-        return render_template(url_for('app.templates', filename='404.html'), 404)
+#     # Sample HTTP error handling
+#     @main_app.errorhandler(404)
+#     def not_found(error):
+#         return render_template('404.html')
 
-    # Handler for letsencrypt?
-    @app.route('/.well-known/acme-challenge/<path:filename>')
-    def send_challenge(filename):
-        return send_from_directory(app.config['WELL_KNOWN_DIR'], filename)
+#     # Handler for letsencrypt?
+#     @main_app.route('/.well-known/acme-challenge/<path:filename>')
+#     def send_challenge(filename):
+#         return send_from_directory(app.config['WELL_KNOWN_DIR'], filename)
 
 
 

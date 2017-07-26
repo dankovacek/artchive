@@ -36,7 +36,8 @@ class MainAppManager(SessionManager):
             #state = None
             return render_template('index.html', user=currentUser)
         else:
-            return redirect('/login')
+            print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4')
+            return redirect(url_for('login_ext.Login'))
     #     #, items=items, user=currentUser)
 
     @helpers.login_required
