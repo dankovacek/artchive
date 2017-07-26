@@ -19,6 +19,8 @@ INSTANCE_PATH = os.path.join(BASE_DIR, 'protected/')
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(INSTANCE_PATH, 'artchive.db')
 # SQLALCHEMY_MIGRATE_REPO = os.path.join(BASEDIR, 'db_repository')
 
+WELL_KNOWN_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'public/.well-known/')
+
 DATABASE_CONNECT_OPTIONS = {}
 
 # Application threads. A common general assumption is
