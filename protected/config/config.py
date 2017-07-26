@@ -9,11 +9,14 @@ APPLICATION_ROOT = '/'
 DEBUG = False
 
 # Define the application directory
-BASE_DIR = os.path.dirname(os.path.dirname((os.path.abspath(__file__))))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
+STATIC_DIR = os.path.join(BASE_DIR, 'public/app/static')
+TEMPLATE_DIR = os.path.join(BASE_DIR, 'public/app/templates')
+INSTANCE_PATH = os.path.join(BASE_DIR, 'protected/')
 
 # Define the database - we are working with
 # SQLite for this example
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'artchive.db')
+SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(INSTANCE_PATH, 'artchive.db')
 # SQLALCHEMY_MIGRATE_REPO = os.path.join(BASEDIR, 'db_repository')
 
 DATABASE_CONNECT_OPTIONS = {}
@@ -35,3 +38,5 @@ SESSION_COOKIE_PATH = os.path.join(BASE_DIR, 'session_cookie')
 
 # API Keys for Google Maps
 #GOOGLEMAPS_KEY = ""
+
+SQLALCHEMY_TRACK_MODIFICATIONS = False

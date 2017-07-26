@@ -6,8 +6,8 @@ import sys
 import os
 
 from mod_auth.models.models import User
-from mod_auth.conxn_manager.conxn_manager import dbSession, Base
-from mod_auth.conxn_manager.conxn_manager import SessionManager
+from mod_auth.models.models import dbSession, Base
+from mod_auth.models.models import SessionManager
 
 
 import random

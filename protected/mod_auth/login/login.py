@@ -9,13 +9,12 @@ from flask import redirect, session, make_response, flash, jsonify
 
 from flask import Blueprint
 from mod_auth.helper_fns.helper_fns import helperManager
-from mod_auth.conxn_manager.conxn_manager import SessionManager
+from mod_auth.models.models import SessionManager
 
 from mod_auth.models.models import Base, User, dbSession
 
 import cgi
 import httplib2
-# import hmac
 import jinja2
 import json
 import os
@@ -41,7 +40,7 @@ CLIENT_ID = helpers.get_api_key('oauth2', 'web', 'client_id')
 
 #STORAGE = Storage('gmail.storage')
 
-INSTANCE_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'api_keys')
+API_KEY_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'api_keys')
 
 class LoginManager(SessionManager):
     """Functions for handling login and logout."""
@@ -52,7 +51,7 @@ class LoginManager(SessionManager):
         Otherwise, redirect to the main page."""
         current_user = helpers.get_current_user()
         if current_user is None:
-            return render_template('login.html')
+            return render_template('login_ext.login.html')
         else:
             return redirect('/')
 

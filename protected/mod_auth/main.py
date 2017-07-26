@@ -3,7 +3,7 @@ from flask import redirect, session, make_response, flash, jsonify
 
 from helper_fns.helper_fns import helperManager
 from models.models import User
-from conxn_manager.conxn_manager import SessionManager
+from models.models import SessionManager
 
 import cgi
 #import httplib2
